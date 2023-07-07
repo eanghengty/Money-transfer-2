@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "121880356291",
+    "firebase_url": "https://mtaproject-b19ed-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "mtaproject-b19ed",
+    "storage_bucket": "mtaproject-b19ed.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:121880356291:android:b9394f0a810364a8810976",
+        "android_client_info": {
+          "package_name": "com.example.truemoneyversion2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "121880356291-otbl0ifdmhes2rgbg1p2v4ib20jr71jb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDm5J4dOWlZkAzMfUNzh-Iy5jY1Lfnro7U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "121880356291-otbl0ifdmhes2rgbg1p2v4ib20jr71jb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

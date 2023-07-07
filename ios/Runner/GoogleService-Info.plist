@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>121880356291-8188oa7tca3cv4elpilq45ue0o4m4mbi.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.121880356291-8188oa7tca3cv4elpilq45ue0o4m4mbi</string>
+	<key>API_KEY</key>
+	<string>AIzaSyD6Y4qbBVmxJMwQyxwaUlAgMl0O_nRhWz0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>121880356291</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.truemoneyversion2</string>
+	<key>PROJECT_ID</key>
+	<string>mtaproject-b19ed</string>
+	<key>STORAGE_BUCKET</key>
+	<string>mtaproject-b19ed.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:121880356291:ios:460c98cff894822a810976</string>
+	<key>DATABASE_URL</key>
+	<string>https://mtaproject-b19ed-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+</dict>
+</plist>
