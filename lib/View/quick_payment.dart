@@ -3,6 +3,8 @@ import'package:flutter/cupertino.dart';
 import 'package:truemoneyversion2/View/home_screen_view.dart';
 import 'package:truemoneyversion2/View/make_payment_screen.dart';
 import 'package:truemoneyversion2/View/quick_payment_add.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 class QuickPayment extends StatefulWidget {
   const QuickPayment({Key? key}) : super(key: key);
 
@@ -11,6 +13,34 @@ class QuickPayment extends StatefulWidget {
 }
 
 class _QuickPaymentState extends State<QuickPayment> {
+
+  final serviceselectioncontroller = TextEditingController();
+  final servicenamecontroller = TextEditingController();
+  final descriptioncontroller=TextEditingController();
+  final currentuser=FirebaseAuth.instance;
+  final accountidcontroller=TextEditingController();
+  final amountcontroller=TextEditingController();
+  void dipose(){
+    accountidcontroller.dispose();
+    descriptioncontroller.dispose();
+    servicenamecontroller.dispose();
+    serviceselectioncontroller.dispose();
+    amountcontroller.dispose();
+    dispose();
+  }
+  Future addquicktransfer() async {
+    await FirebaseFirestore.instance.collection('quicktransfer').add({
+      'accountid':accountidcontroller.text.trim(),
+      'description':descriptioncontroller.text.trim(),
+      'amount':amountcontroller.value,
+      'servicename':servicenamecontroller,
+      'serviceselection':serviceselectioncontroller,
+      'uid':currentuser.currentUser!.uid,
+
+    });
+  }
+
+
   Widget payment({required String icon, required String text, required String description}){
     return InkWell(
       onTap: (){

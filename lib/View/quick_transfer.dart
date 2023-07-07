@@ -3,6 +3,8 @@ import'package:flutter/cupertino.dart';
 import 'package:truemoneyversion2/View/home_screen_view.dart';
 import 'package:truemoneyversion2/View/quick_transfer_add.dart';
 import'package:truemoneyversion2/View/make_transfer_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 class QuickTransfer extends StatefulWidget {
   const QuickTransfer({Key? key}) : super(key: key);
 
@@ -11,6 +13,27 @@ class QuickTransfer extends StatefulWidget {
 }
 
 class _QuickTransferState extends State<QuickTransfer> {
+
+  List<String> accountid=[];
+  List<String> description=[];
+  Future getDocId() async{
+    await FirebaseFirestore.instance.collection('quicktransfer').where('uid',isEqualTo: FirebaseAuth.instance.currentUser!.uid).get().then(
+            (snapshot)=>snapshot.docs.forEach((document) {
+          setState(() {
+            accountid.add(document['accountid']);
+            description.add(document['description']);
+            print(accountid.length);
+          });
+        })
+    );
+  }
+  @override
+  void initState() {
+    getDocId();
+    // TODO: implement initState
+    super.initState();
+  }
+
   Widget user({required String icon, required String text, required String description}){
     return InkWell(
       onTap: (){
@@ -100,6 +123,7 @@ class _QuickTransferState extends State<QuickTransfer> {
               description: '00011'),
           user(icon:'lib/Assets/user.png',text:'User B', description: '00012'),
           user(icon:'lib/Assets/user.png',text:'User C', description: '00013')
+
 
         ],
       ),
