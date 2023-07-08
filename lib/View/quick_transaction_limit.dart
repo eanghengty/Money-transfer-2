@@ -280,7 +280,7 @@ class _QuickTransactionState extends State<QuickTransaction> {
                 //   },
                 // ),
                 AnimatedButton(
-                  text:'Sign up',
+                  text:'set limit',
                   color: Colors.orange,
                   pressEvent: (){
                     AwesomeDialog(

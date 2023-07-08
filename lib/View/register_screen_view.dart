@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:truemoneyversion2/View/sign_in_screen_view.dart';
@@ -7,7 +9,7 @@ import 'package:truemoneyversion2/View/verify_code_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 class RegisterString extends StatefulWidget {
   const RegisterString({Key? key}) : super(key: key);
 
@@ -16,6 +18,8 @@ class RegisterString extends StatefulWidget {
 }
 
 class _RegisterStringState extends State<RegisterString> {
+  final firebase_storage.FirebaseStorage storage=firebase_storage.FirebaseStorage.instance;
+
 
   List list_item=[
     'Bank','Worker'
@@ -30,6 +34,12 @@ class _RegisterStringState extends State<RegisterString> {
   String? file_name;
   bool is_loading=false;
 
+  Future uploadfile() async{
+    final path='files/${pickedfile!.name}';
+    final file=File(pickedfile!.path!);
+    final ref=firebase_storage.FirebaseStorage.instance.ref().child(path);
+    ref.putFile(file);
+  }
 
   void picked_file() async{
     try{
@@ -37,13 +47,16 @@ class _RegisterStringState extends State<RegisterString> {
         is_loading=true;
       });
       result=await FilePicker.platform.pickFiles(
-        type: FileType.any,
-        allowMultiple: false
+        type: FileType.custom,
+        allowMultiple: false,
+        allowedExtensions: ['png','jpg']
       );
       if (result!=null){
         file_name=result!.files.first.name;
         pickedfile=result!.files.first;
+
       }
+
       setState(() {
         is_loading=false;
       });
@@ -58,9 +71,10 @@ class _RegisterStringState extends State<RegisterString> {
   final dateofbirthcontroller=TextEditingController();
   final jobselectioncontroller=TextEditingController();
   final phonenumbercontroller=TextEditingController();
-  final usdmoneycontroller=0;
-  final khmoneycontroller=0;
-  final transactioncontroller=0;
+  final usdmoneycontroller="0";
+
+  final khmoneycontroller="0";
+  final transactioncontroller="0";
   final accountcreateddate=DateTime.timestamp();
   final currentuser = FirebaseAuth.instance;
   final userrolecontroller="customer";
@@ -100,11 +114,11 @@ class _RegisterStringState extends State<RegisterString> {
   // }
   List<String> phonenumber=[];
   Future getphonenumber() async{
-    await FirebaseFirestore.instance.collection('customer')..get().then(
+    await FirebaseFirestore.instance.collection('customer').get().then(
             (snapshot)=>snapshot.docs.forEach((document) {
           setState(() {
             phonenumber.add(document['phonenumber']);
-            print(phonenumber.length);
+            print("total phonen: " + phonenumber.length.toString());
           });
 
         })
@@ -122,23 +136,39 @@ class _RegisterStringState extends State<RegisterString> {
       'dateofbirth':dateofbirthcontroller.text.trim(),
       'jobselection':jobselectioncontroller.text.trim(),
       'phonenumber':phonenumbercontroller.text.trim(),
-      'usdmoney':usdmoneycontroller,
+      'enmoney':usdmoneycontroller,
       'khmoney':khmoneycontroller,
       'uid':currentuser.currentUser!.uid,
       'userrole':userrolecontroller,
       'userverify':userverifycontroller,
-      'accountid':phonenumbercontroller.text.trim()
+      'accountid':phonenumbercontroller.text.trim(),
+      'createddate':DateTime.now().toString()
     });
   }
 
 
 
-
-  bool passwordconfirmed(){
-    if(phonenumbercontroller==confirmedpasswordcontroller){
-      return true;
-    }else{
+  List<String> phone=[];
+  void passwordconfirmedone(){
+    for(int i=0;i<phonenumber.length;i++){
+      if(phonenumbercontroller.text.trim()!=phonenumber[i]){
+        setState(() {
+          phone.add('1');
+          print('1. '+ phonenumbercontroller.text.trim());
+        });
+      }else{
+        setState(() {
+          phone.add('0');
+          print('0. '+ phonenumbercontroller.text.trim());
+        });
+      }
+    }
+  }
+  bool passwordconfirmtwo(){
+    if(phone.contains('0')){
       return false;
+    }else{
+      return true;
     }
   }
   void dispose(){
@@ -331,13 +361,26 @@ class _RegisterStringState extends State<RegisterString> {
                       dialogType: DialogType.warning,
                       animType: AnimType.topSlide,
                       showCloseIcon: true,
-                      title: "Permission verification",
-                      desc:"Please proceed verify your account",
+                      title: "Creating account",
+                      desc:"Please kindly wait.",
                       btnCancelOnPress: () {},
                       btnOkOnPress: () {
-                      adduserdetail();
-                      Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                          builder: (ctx) => const VerifyCode()));
+                        passwordconfirmedone();
+                        if(passwordconfirmtwo()){
+                        adduserdetail();
+                        Navigator.of(context).pushReplacement(CupertinoPageRoute(
+                            builder: (ctx) => const VerifyCode()));
+                      }else{
+                          AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.warning,
+                              animType: AnimType.topSlide,
+                              showCloseIcon: true,
+                              title: "This phone number has already use",
+                              desc:"Please kindly try another.",
+                              btnCancelOnPress: () {},).show();
+                      }
+
                           }
                       ).show();
 

@@ -22,7 +22,8 @@ class _MyWalletState extends State<MyWallet> {
             (snapshot)=>snapshot.docs.forEach((document) {
               print(document.reference);
           setState(() {
-            docIDs.add(document.reference.id);
+            docIDs.add(document['enmoney']);
+            docIDs.add(document['khmoney']);
           });
         })
     );
@@ -111,7 +112,7 @@ class _MyWalletState extends State<MyWallet> {
                               SizedBox(
                                 width: 15,
                               ),
-                              docIDs.length==2? getaccountinfo(documentid: docIDs[1],currency:'usdmoney'):Text(
+                              docIDs.length==3? Text(docIDs[1],style: TextStyle(fontSize: 16, color: Colors.white)):Text(
                                 '00.00',
                                 style: TextStyle(color: Colors.white, fontSize: 16),
                               ),
@@ -132,7 +133,7 @@ class _MyWalletState extends State<MyWallet> {
                               SizedBox(
                                 width: 15,
                               ),
-                              docIDs.length==2? getaccountinfo(documentid: docIDs[1],currency:'khmoney'):Text(
+                              docIDs.length==3? Text(docIDs[2],style: TextStyle(fontSize: 16, color: Colors.white)):Text(
                                 '00.00',
                                 style: TextStyle(color: Colors.white, fontSize: 16),
                               ),

@@ -29,9 +29,11 @@ class _QuickTransferAddState extends State<QuickTransferAdd> {
       'accountid':accountidcontroller.text.trim(),
       'description':descriptioncontroller.text.trim(),
       'uid':currentuser.currentUser!.uid,
+      'status':'unselected'
 
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
