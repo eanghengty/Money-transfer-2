@@ -3,6 +3,8 @@ import'package:flutter/cupertino.dart';
 import 'package:truemoneyversion2/View/loading_payment_completed.dart';
 import 'package:truemoneyversion2/View/quick_payment.dart';
 import'package:lottie/lottie.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 class QuickPaymentAdd extends StatefulWidget {
   const QuickPaymentAdd({Key? key}) : super(key: key);
 
@@ -11,6 +13,34 @@ class QuickPaymentAdd extends StatefulWidget {
 }
 
 class _QuickPaymentAddState extends State<QuickPaymentAdd> {
+
+  var serviceselectioncontroller = "";
+  final servicenamecontroller = TextEditingController();
+  final descriptioncontroller=TextEditingController();
+  final currentuser=FirebaseAuth.instance;
+  final accountidcontroller=TextEditingController();
+  final amountcontroller=TextEditingController();
+  void dipose(){
+    accountidcontroller.dispose();
+    descriptioncontroller.dispose();
+    servicenamecontroller.dispose();
+
+    amountcontroller.dispose();
+    dispose();
+  }
+  Future addquickpayment() async {
+    await FirebaseFirestore.instance.collection('quickpayment').add({
+      'accountid':accountidcontroller.text.trim(),
+      'description':descriptioncontroller.text.trim(),
+      'amount':amountcontroller.text.trim(),
+      'servicename':servicenamecontroller.text.trim(),
+      'serviceselection':serviceselectioncontroller,
+      'uid':currentuser.currentUser!.uid,
+
+    });
+  }
+
+
   List payment_menu=['Mobile Top-up','Utilities','Education'];
   String select_value='Mobile Top-up';
 
@@ -64,6 +94,7 @@ class _QuickPaymentAddState extends State<QuickPaymentAdd> {
                   onChanged:(new_value){
                     setState(() {
                       select_value=new_value as String;
+                      serviceselectioncontroller=new_value;
                     });},
                   items: payment_menu.map((value_item){
                     return DropdownMenuItem(child: Text(value_item),value: value_item,);
@@ -76,6 +107,7 @@ class _QuickPaymentAddState extends State<QuickPaymentAdd> {
                   height: 16,
                 ),
                 TextField(
+                  controller: servicenamecontroller,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Service Name',
@@ -85,6 +117,27 @@ class _QuickPaymentAddState extends State<QuickPaymentAdd> {
                   height: 16,
                 ),
                 TextField(
+                  controller: accountidcontroller,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Account Id',
+                  ),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                TextField(
+                  controller: amountcontroller,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Amount',
+                  ),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                TextField(
+                  controller: descriptioncontroller,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Description',
@@ -108,6 +161,9 @@ class _QuickPaymentAddState extends State<QuickPaymentAdd> {
                     elevation: 0,
                   ),
                   onPressed: () {
+                    setState(() {
+                      addquickpayment();
+                    });
                     Navigator.of(context).pushReplacement(CupertinoPageRoute(
                         builder: (ctx) => const LoadingCompleted()));
                   },

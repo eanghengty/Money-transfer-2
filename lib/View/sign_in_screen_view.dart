@@ -141,18 +141,36 @@ class _SignInScreenState extends State<SignInScreen> {
                       //   },
                       // ),
                       SizedBox(height: 16,),
-                      Text('Tap on this "Register" button to register new account for your starting your money transfer process.'),
-                      SizedBox(height: 16,),
-                      ElevatedButton(
-                        child: Text("Register", style:
-                        TextStyle(color: Colors.white,)),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.lightBlue,
-                          elevation: 0,
-
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const signup()) );
+                      // Text('Tap on this "Register" button to register new account for your starting your money transfer process.'),
+                      // SizedBox(height: 16,),
+                      // ElevatedButton(
+                      //   child: Text("Register", style:
+                      //   TextStyle(color: Colors.white,)),
+                      //   style: ElevatedButton.styleFrom(
+                      //     primary: Colors.lightBlue,
+                      //     elevation: 0,
+                      //
+                      //   ),
+                      //   onPressed: () {
+                      //     Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const signup()) );
+                      //   },
+                      // ),
+                      AnimatedButton(
+                        text:'Sign up',
+                        color: Colors.orange,
+                        pressEvent: (){
+                          AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.warning,
+                              animType: AnimType.topSlide,
+                              showCloseIcon: true,
+                              title: "Sign up",
+                              desc: "Are you new to our MTA?",
+                              btnCancelOnPress: (){},
+                              btnOkOnPress: (){
+                                Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const signup()) );
+                              }
+                          ).show();
                         },
                       ),
                       SizedBox(height: 16,),

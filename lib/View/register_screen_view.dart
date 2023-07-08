@@ -127,6 +127,7 @@ class _RegisterStringState extends State<RegisterString> {
       'uid':currentuser.currentUser!.uid,
       'userrole':userrolecontroller,
       'userverify':userverifycontroller,
+      'accountid':phonenumbercontroller.text.trim()
     });
   }
 

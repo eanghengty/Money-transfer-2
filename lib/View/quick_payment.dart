@@ -14,31 +14,7 @@ class QuickPayment extends StatefulWidget {
 
 class _QuickPaymentState extends State<QuickPayment> {
 
-  final serviceselectioncontroller = TextEditingController();
-  final servicenamecontroller = TextEditingController();
-  final descriptioncontroller=TextEditingController();
-  final currentuser=FirebaseAuth.instance;
-  final accountidcontroller=TextEditingController();
-  final amountcontroller=TextEditingController();
-  void dipose(){
-    accountidcontroller.dispose();
-    descriptioncontroller.dispose();
-    servicenamecontroller.dispose();
-    serviceselectioncontroller.dispose();
-    amountcontroller.dispose();
-    dispose();
-  }
-  Future addquicktransfer() async {
-    await FirebaseFirestore.instance.collection('quicktransfer').add({
-      'accountid':accountidcontroller.text.trim(),
-      'description':descriptioncontroller.text.trim(),
-      'amount':amountcontroller.value,
-      'servicename':servicenamecontroller,
-      'serviceselection':serviceselectioncontroller,
-      'uid':currentuser.currentUser!.uid,
 
-    });
-  }
 
 
   Widget payment({required String icon, required String text, required String description}){

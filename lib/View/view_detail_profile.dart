@@ -1,7 +1,10 @@
 import'package:flutter/material.dart';
 import'package:lottie/lottie.dart';
 import'package:flutter/cupertino.dart';
+import 'package:truemoneyversion2/Drawbar_view/setting.dart';
 import 'package:truemoneyversion2/View/home_screen_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 class ViewDetail extends StatefulWidget {
   const ViewDetail({Key? key}) : super(key: key);
 
@@ -10,6 +13,32 @@ class ViewDetail extends StatefulWidget {
 }
 
 class _ViewDetailState extends State<ViewDetail> {
+
+  List<String> getaccountinfo=[];
+  Future getDocId() async {
+    await FirebaseFirestore.instance.collection('customer').where(
+        'uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid).get().then(
+            (snapshot) =>
+            snapshot.docs.forEach((document) {
+              setState(() {
+                getaccountinfo.add(document['fullname']);
+                getaccountinfo.add(document['phonenumber']);
+                getaccountinfo.add(document['jobselection']);
+                getaccountinfo.add(document['dateofbirth']);
+                print(getaccountinfo[0]);
+                print(getaccountinfo[1]);
+                print(getaccountinfo[2]);
+                print(getaccountinfo[3]);
+              });
+            })
+    );
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getDocId();
+  }
   Widget list_of_detail({required String title, required Icon icon_data, required String description}){
     return Container(
       padding: EdgeInsets.only(top:5,bottom: 5,right:30,left: 5),
@@ -61,11 +90,11 @@ class _ViewDetailState extends State<ViewDetail> {
           ),
           onTap: () {
             Navigator.of(context).pushReplacement(
-                CupertinoPageRoute(builder: (ctx) => const HomeScreen()));
+                CupertinoPageRoute(builder: (ctx) => const Setting()));
           },
         ),
       ),
-      body: SingleChildScrollView(
+      body: getaccountinfo.length==4 ?SingleChildScrollView(
         child: Container(
           width: double.infinity,
 
@@ -84,7 +113,7 @@ class _ViewDetailState extends State<ViewDetail> {
                         child: Lottie.network('https://assets10.lottiefiles.com/packages/lf20_z3pnisgt.json'),
                       ),
                       SizedBox(height: 16,),
-                      Text('Hi, Hengty',
+                      Text('Hi, '+ getaccountinfo[0],
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -108,19 +137,19 @@ class _ViewDetailState extends State<ViewDetail> {
                 children: [
                   list_of_detail(title:'Full Name',
                       icon_data:Icon(Icons.account_circle_rounded,size: 35,),
-                  description: 'Eang Hengty'),
+                  description: getaccountinfo[0]),
                   list_of_detail(title:'Phone Number',
                       icon_data:Icon(Icons.phone_android_rounded,size: 35,),
-                      description: '010 XXX XXXX'),
+                      description: getaccountinfo[1]),
                   list_of_detail(title:'Date of Birth',
                       icon_data:Icon(Icons.date_range_rounded,size: 35,),
-                      description: '03-Jan-2001'),
+                      description: getaccountinfo[3]),
                   list_of_detail(title:'Province',
                       icon_data:Icon(Icons.place_sharp,size: 35,),
                       description: 'Battambang'),
                   list_of_detail(title:'Career type',
                       icon_data:Icon(Icons.work,size: 35,),
-                      description: 'Employment'),
+                      description: getaccountinfo[2]),
                   list_of_detail(title:'Deposit Range',
                       icon_data:Icon(Icons.monetization_on,size: 35,),
                       description: '> 300\$'),
@@ -128,6 +157,19 @@ class _ViewDetailState extends State<ViewDetail> {
               )
             ],
           ),
+        ),
+      ):Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 250,
+              height: 250,
+              child: Lottie.network('https://assets1.lottiefiles.com/packages/lf20_a2chheio.json'),
+            ),
+            SizedBox(height: 16,),
+            Text('setting up transaction limit')
+          ],
         ),
       ),
     );

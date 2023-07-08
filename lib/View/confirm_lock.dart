@@ -235,7 +235,7 @@ class _ConfirmLockState extends State<ConfirmLock> {
                   children: [
                     num_button(text:'10',icon_data: Icon(Icons.cancel_outlined,size:16,color: Colors.white,)),
                     SizedBox(width: 30,),
-                    num_button(text:'2'),
+                    num_button(text:'0'),
                     SizedBox(width: 30,),
                     num_button(text:'11'),
                   ],

@@ -31,11 +31,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   var is_load_home = true;
   List<String> docIDs=['test'];
+  List<String> getaccountid=[];
   Future getDocId() async{
     await FirebaseFirestore.instance.collection('customer').where('uid',isEqualTo: FirebaseAuth.instance.currentUser!.uid).get().then(
         (snapshot)=>snapshot.docs.forEach((document) {
           print(document.reference);
           docIDs.add(document.reference.id);
+          setState(() {
+            getaccountid.add(document['accountid']);
+          });
         })
     );
   }
@@ -264,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         )),
                                     SizedBox(height: 16),
                                     getdata(documentid: docIDs[1]),
-                                    Text('User AID: 00010',
+                                    Text(getaccountid.length==1?'AID: ' + getaccountid[0]:'AID: '+'loading...',
                                         style: TextStyle(
                                             fontSize: 12.0,
                                             fontWeight: FontWeight.w400,

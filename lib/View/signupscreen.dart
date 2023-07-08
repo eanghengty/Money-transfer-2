@@ -125,21 +125,37 @@ class _signupState extends State<signup> {
                             border: OutlineInputBorder(),
                             labelText: 'confirm password',
                           ),),
+                        // SizedBox(height: 16,),
+                        // Text('Tap on this "done" button to signup.'),
                         SizedBox(height: 16,),
-                        Text('Tap on this "done" button to signup.'),
-                        SizedBox(height: 16,),
-                        GestureDetector(
-                          onTap: signup,
-                          child: Container(
-                            decoration: BoxDecoration(color: Colors.blue),
-                            width: 90,
-                            height: 50,
-                            child: Center(
-                              child: Text("Sign up", style: TextStyle(color: Colors.white,)),
-                            )
-                          )
-
-                        ),
+                        // GestureDetector(
+                        //   onTap: signup,
+                        //   child: Container(
+                        //     decoration: BoxDecoration(color: Colors.blue),
+                        //     width: 90,
+                        //     height: 50,
+                        //     child: Center(
+                        //       child: Text("Sign up", style: TextStyle(color: Colors.white,)),
+                        //     )
+                        //   )
+                        //
+                        // ),
+                      AnimatedButton(
+                        text:'Sign up',
+                        color: Colors.blue,
+                        pressEvent: (){
+                        AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.warning,
+                        animType: AnimType.topSlide,
+                        showCloseIcon: true,
+                        title: "Sign up now",
+                        desc: "Are you sure to sign up?",
+                        btnCancelOnPress: (){},
+                        btnOkOnPress: (){
+                        signup();
+                        }
+                          ).show();}),
                         // ElevatedButton(
                         //   child: Text("Confirm Register",
                         //       style: TextStyle(
@@ -152,20 +168,36 @@ class _signupState extends State<signup> {
                         //   onPressed: signup
                         // ),
                         SizedBox(height: 16,),
-                        Text('Tap on this "Register" button to register new account for your starting your money transfer process.'),
-                        SizedBox(height: 16,),
-                        ElevatedButton(
-                          child: Text("sign in", style:
-                          TextStyle(color: Colors.white,)),
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.lightBlue,
-                            elevation: 0,
-
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const SignInScreen() ));
-                          },
-                        ),
+                        // Text('Tap on this "Register" button to register new account for your starting your money transfer process.'),
+                        // SizedBox(height: 16,),
+                        // ElevatedButton(
+                        //   child: Text("sign in", style:
+                        //   TextStyle(color: Colors.white,)),
+                        //   style: ElevatedButton.styleFrom(
+                        //     primary: Colors.lightBlue,
+                        //     elevation: 0,
+                        //
+                        //   ),
+                        //   onPressed: () {
+                        //     Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const SignInScreen() ));
+                        //   },
+                        // ),
+                        AnimatedButton(
+                            text:'Sign in',
+                            color: Colors.orange,
+                            pressEvent: (){
+                              AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.warning,
+                                  animType: AnimType.topSlide,
+                                  showCloseIcon: true,
+                                  title: "Sign in",
+                                  desc: "You already created an account?",
+                                  btnCancelOnPress: (){},
+                                  btnOkOnPress: (){
+                                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const SignInScreen() ));
+                                  }
+                              ).show();}),
                         SizedBox(height: 16,),
                         Text('Tap on this "Agent" button to sigin as agent account.'),
                         SizedBox(height: 16,),
