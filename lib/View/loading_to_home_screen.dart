@@ -8,6 +8,7 @@ import'package:truemoneyversion2/View/home_screen_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:truemoneyversion2/View/loadingtoadmin.dart';
+import 'package:truemoneyversion2/View/loadingtoagent.dart';
 class LoadingToHome extends StatefulWidget {
   const LoadingToHome({Key? key}) : super(key: key);
 
@@ -35,8 +36,10 @@ class _LoadingToHomeState extends State<LoadingToHome> {
             docIDs.add(document['userrole']);
           });
 
+
         })
     );
+    shift_to_home();
   }
   void dispose(){
     super.dispose();
@@ -46,14 +49,14 @@ class _LoadingToHomeState extends State<LoadingToHome> {
     getDocId();
     // TODO: implement initState
     super.initState();
-    shift_to_home();
+
 
 
   }
   shift_to_home(){
     if(docIDs[1]=='agent'){
       Future.delayed(Duration(seconds: 7)).then((value) =>
-          Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const AgentHomeScreen() )));
+          Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const loadingtoagent())));
     }else if(docIDs[1]=='admin'){
 
         Future.delayed(Duration(seconds: 7)).then((value) =>

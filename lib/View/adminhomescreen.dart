@@ -10,8 +10,9 @@ import 'package:truemoneyversion2/View/admin_user_created_screen.dart';
 import 'package:truemoneyversion2/View/agent_post.dart';
 import 'package:truemoneyversion2/View/adminrequest.dart';
 import 'package:truemoneyversion2/View/agent_transaction_log.dart';
-import 'package:truemoneyversion2/View/agent_user_created_screen.dart';
+
 import 'package:truemoneyversion2/View/notification_agent_screen.dart';
+import 'package:truemoneyversion2/View/notificationadminscreen.dart';
 import 'package:truemoneyversion2/View/sign_in_screen_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -27,12 +28,13 @@ class adminhomescreen extends StatefulWidget {
 class _adminhomescreenState extends State<adminhomescreen> {
 
   List<String> admininfo=[];
+  List<String> adminaccountid=[];
   Future getDocId() async{
     await FirebaseFirestore.instance.collection('customer').where('userrole',isEqualTo: 'admin').get().then(
             (snapshot)=>snapshot.docs.forEach((document) {
           setState(() {
               admininfo.add(document['fullname']);
-              admininfo.add(document['accountid']);
+              adminaccountid.add(document['accountid']);
 
             }
 
@@ -191,7 +193,7 @@ class _adminhomescreenState extends State<adminhomescreen> {
           actions: [
             InkWell(
               onTap: (){
-                Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=> NotificationAgentScreen()));
+                Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=> notificationadmin()));
               },
               child: Icon(
                 Icons.notifications_active_outlined,
@@ -231,12 +233,12 @@ class _adminhomescreenState extends State<adminhomescreen> {
                                         borderRadius: BorderRadius.circular(50),
                                       )),
                                   SizedBox(height: 16),
-                                  Text('Welcome, ',
+                                  Text(admininfo.length==0?'Welcome, admin':'Welcome, ' + admininfo[0],
                                       style: TextStyle(
                                           fontSize: 16.0,
                                           fontWeight: FontWeight.w400,
                                           color: Colors.white)),
-                                  Text('AID: ',
+                                  Text(adminaccountid.length==0?'AID: loading...':'AID: ' + adminaccountid[0],
                                       style: TextStyle(
                                           fontSize: 12.0,
                                           fontWeight: FontWeight.w400,
@@ -322,7 +324,7 @@ class _adminhomescreenState extends State<adminhomescreen> {
                               color: Colors.white,
                               size: 48,
                             ),
-                            'New user created',
+                            'User mgmt',
                             id:0),
                         feature_grid(
                             Icon(
@@ -337,7 +339,7 @@ class _adminhomescreenState extends State<adminhomescreen> {
                               color: Colors.white,
                               size: 48,
                             ),
-                            'Permission request',id:1),
+                            'Transaction Request',id:1),
                       ],
                     ),
                   ),

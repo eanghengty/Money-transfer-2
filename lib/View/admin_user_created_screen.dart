@@ -29,7 +29,8 @@ class _AdminUserCreatedAccountState extends State<adminusercreatedaccount> {
     super.dispose();
     getDocId();
   }
-
+  List<String> enamount=[];
+  List<String> khamount=[];
   Future getDocId() async {
     await FirebaseFirestore.instance.collection('customer').where(
         'userrole', isNotEqualTo: 'admin').get().then(
@@ -42,6 +43,8 @@ class _AdminUserCreatedAccountState extends State<adminusercreatedaccount> {
                 uidlist.add(document['uid']);
                 verifystatus.add(document['verifystatus']);
                 accountstatus.add(document['accountactivated']);
+                enamount.add(document['enmoney']);
+                khamount.add(document['khmoney']);
                 doc.add(document.reference.id);
 
               }
@@ -184,6 +187,84 @@ class _AdminUserCreatedAccountState extends State<adminusercreatedaccount> {
     );
   }
 
+  final enmoneyupdatecontroller=TextEditingController();
+  final khmoneyupdatecontroller=TextEditingController();
+
+  Future updatekhmoney(int num) async{
+    await FirebaseFirestore.instance.collection('customer')
+        .doc(doc[num])
+        .update({'khmoney': khmoneyupdatecontroller.text.trim()});
+    print('status change to selected');}
+
+
+  Future updateenmoney(int num) async{
+    await FirebaseFirestore.instance.collection('customer')
+        .doc(doc[num])
+        .update({'enmoney': enmoneyupdatecontroller.text.trim()});
+    print('status change to selected');}
+
+
+  Future editcredit(int num){
+    return showDialog(context: context, builder: (context)=>AlertDialog(
+      title:Text('Edit '+ name[num] + " credit"),
+      content:SingleChildScrollView(
+        child: Column(
+          children: [
+            TextField(
+              autofocus: true,
+              controller: enmoneyupdatecontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'update change current USD amount',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            TextField(
+              controller: khmoneyupdatecontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'change current KHR amount',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: (){
+          AwesomeDialog(
+              context: context,
+              dialogType: DialogType.warning,
+              animType: AnimType.topSlide,
+              showCloseIcon: true,
+              title: "Update customer credit",
+              desc: "Are you sure to change this?",
+              btnOkOnPress: () {
+                setState(() {
+                  if(khmoneyupdatecontroller.text.trim().toString()!=""){
+                    updatekhmoney(num);
+                  }
+                  if(enmoneyupdatecontroller.text.trim().toString()!=""){
+                    updateenmoney(num);
+                  }
+
+                });
+              },
+
+          ).show();
+        }, child: Text('Update'))
+      ],
+    ),
+
+    );
+  }
+
+
   Future updatename(int num) async {
     await FirebaseFirestore.instance.collection('customer')
         .doc(doc[num])
@@ -251,7 +332,7 @@ class _AdminUserCreatedAccountState extends State<adminusercreatedaccount> {
 
   }
     Widget list_user(
-        {required String name, required String date, required String accountid, required int num, required String verify, required String status}) {
+        {required String name, required String date, required String accountid, required int num, required String verify, required String status, required String kh, required String en}) {
       return Container(
         decoration: BoxDecoration(
             color: Colors.blue[800],
@@ -289,6 +370,20 @@ class _AdminUserCreatedAccountState extends State<adminusercreatedaccount> {
             Text(status == 'no'
                 ? 'this status account: disactivated'
                 : 'this status account: activated',
+              style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  color: Colors.white
+              ),),
+            SizedBox(height: 16,),
+            Text('Current USD: '+ en,
+              style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  color: Colors.white
+              ),),
+            SizedBox(height: 16,),
+            Text('Current KHR: '+ kh,
               style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
@@ -471,7 +566,7 @@ class _AdminUserCreatedAccountState extends State<adminusercreatedaccount> {
                   },),
                 SizedBox(width: 20,),
                 ElevatedButton(
-                  child: Text("add credit", style:
+                  child: Text("edit credit", style:
                   TextStyle(color: Colors.white,)),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.redAccent,
@@ -484,14 +579,12 @@ class _AdminUserCreatedAccountState extends State<adminusercreatedaccount> {
                         dialogType: DialogType.warning,
                         animType: AnimType.topSlide,
                         showCloseIcon: true,
-                        title: "Password not match",
-                        desc: "Please try again",
+                        title: "Update Credit",
+                        desc: "Are you sure?",
                         btnOkOnPress: () {
-
+                            editcredit(num);
                         },
-                        btnCancelOnPress: () {
 
-                        }
                     ).show();
                   },),
                 SizedBox(width: 20,),
@@ -549,7 +642,9 @@ class _AdminUserCreatedAccountState extends State<adminusercreatedaccount> {
                     accountid: accountid[index],
                     num: index,
                     verify: verifystatus[index],
-                status:accountstatus[index]);
+                status:accountstatus[index],
+                kh:khamount[index],
+                en:enamount[index],);
               })
 
       );

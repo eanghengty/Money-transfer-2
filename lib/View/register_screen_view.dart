@@ -153,7 +153,10 @@ class _RegisterStringState extends State<RegisterString> {
       'status':"enabled",
       'accountactivated':'yes',
       'accountstatus':'online',
-      'verifystatus':'no'
+      'verifystatus':'no',
+      'avgdeposit':'',
+      'province':''
+
 
     });
   }
