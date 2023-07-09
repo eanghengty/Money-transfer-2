@@ -308,6 +308,7 @@ class _adminhomescreenState extends State<adminhomescreen> {
               visible: is_load_home,
               child: Column(
                 children: [
+
                   Container(
                     width: double.infinity,
                     height: 150,
@@ -340,6 +341,35 @@ class _adminhomescreenState extends State<adminhomescreen> {
                               size: 48,
                             ),
                             'Transaction Request',id:1),
+
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: 150,
+                    decoration: BoxDecoration(
+                        color: Colors.blue[900],
+                        border: Border(
+                          top: BorderSide(width: 2, color: Colors.white30),
+                        )),
+                    child: Row(
+                      children: [
+                        feature_grid(
+                            Icon(
+                              Icons.payment_outlined,
+                              color: Colors.white,
+                              size: 48,
+                            ),
+                            'Payment services mgmt',id:3),
+                        feature_grid(
+                            Icon(
+                              Icons.star_border,
+                              color: Colors.white,
+                              size: 48,
+                            ),
+                            'Promotions mgmt',id:4),
+
                       ],
                     ),
                   ),
@@ -351,6 +381,30 @@ class _adminhomescreenState extends State<adminhomescreen> {
                       animation:
                       'https://assets3.lottiefiles.com/packages/lf20_q0vtqaxf.json',
                       ID:0),
+                  feature_row(
+                      color_num: 800,
+                      title_text: 'Create user',
+                      description_text: 'This feature offer you the possibilty of '
+                          'created user with different roles.',
+                      animation:
+                      'https://assets6.lottiefiles.com/packages/lf20_ad1buz0z.json',
+                      ID:1),
+                  feature_row(
+                      color_num: 900,
+                      title_text: 'Create payment services',
+                      description_text: 'This feature offer you the possibilty of '
+                          'created different payment services for user',
+                      animation:
+                      'https://assets6.lottiefiles.com/packages/lf20_ad1buz0z.json',
+                      ID:2),
+                  feature_row(
+                      color_num: 800,
+                      title_text: 'Create promotions',
+                      description_text: 'This feature offer you the possibilty of '
+                          'created different promotions for user',
+                      animation:
+                      'https://assets6.lottiefiles.com/packages/lf20_ad1buz0z.json',
+                      ID:2),
 
                 ],
               ),

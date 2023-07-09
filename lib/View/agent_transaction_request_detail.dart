@@ -3,6 +3,7 @@ import'package:flutter/cupertino.dart';
 import'package:lottie/lottie.dart';
 import 'package:truemoneyversion2/View/agent_home_screen.dart';
 import 'package:truemoneyversion2/View/adminrequest.dart';
+import 'package:truemoneyversion2/View/agentrequest.dart';
 
 class TransactionDetails extends StatefulWidget {
   const TransactionDetails({Key? key}) : super(key: key);
@@ -30,7 +31,7 @@ class _TransactionDetailsState extends State<TransactionDetails> {
           ),
           onTap: () {
             Navigator.of(context).pushReplacement(
-                CupertinoPageRoute(builder: (ctx) => const adminrequest()));
+                CupertinoPageRoute(builder: (ctx) => const agentrequest()));
           },
         ),
       ),

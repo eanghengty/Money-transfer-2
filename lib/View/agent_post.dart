@@ -67,7 +67,7 @@ class _AgentPostState extends State<AgentPost> {
             ),
             onTap: () {
               Navigator.of(context).pushReplacement(
-                  CupertinoPageRoute(builder: (ctx) => const adminhomescreen()));
+                  CupertinoPageRoute(builder: (ctx) => const AgentHomeScreen()));
             },
           ),
         ),

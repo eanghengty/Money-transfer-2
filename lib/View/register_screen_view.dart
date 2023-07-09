@@ -269,6 +269,7 @@ class _RegisterStringState extends State<RegisterString> {
                     child: Lottie.network(
                         'https://assets6.lottiefiles.com/packages/lf20_wzAk0pBKAp.json')),
                 TextFormField(
+                  maxLength: 20,
                   controller: fullnamecontroller,
                   validator: (value){
                     if(value!.isEmpty){
@@ -304,6 +305,7 @@ class _RegisterStringState extends State<RegisterString> {
                 //   ),
                 // ),
                 TextField(
+                  maxLength: 10,
                   controller: jobselectioncontroller,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -314,6 +316,8 @@ class _RegisterStringState extends State<RegisterString> {
                   height: 16,
                 ),
                 TextFormField(
+                  maxLength: 10,
+                  enableInteractiveSelection: false,
                   keyboardType: TextInputType.number,
                   controller: phonenumbercontroller,
                   decoration: InputDecoration(
@@ -479,10 +483,23 @@ class _RegisterStringState extends State<RegisterString> {
                           passwordconfirmedone();
                        print(phone.length);
                         if(passwordconfirmtwo()){
-                        adduserdetail();
-                        addusermoredetail();
-                        Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                            builder: (ctx) => const VerifyCode()));
+                            if(fullnamecontroller.text.trim().toString()=="" || dateofbirthcontroller=="" || phonenumbercontroller.text.trim().toString()=="" || jobselectioncontroller.text.trim().toString()==""){
+                              AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.warning,
+                                animType: AnimType.topSlide,
+                                showCloseIcon: true,
+                                title: "Missing information",
+                                desc:"Please kindly fill all the requirement information.",
+                                btnCancelOnPress: () {
+                                  phone.clear();
+                                },).show();
+                            }else{
+                              adduserdetail();
+                              addusermoredetail();
+                              Navigator.of(context).pushReplacement(CupertinoPageRoute(
+                                  builder: (ctx) => const VerifyCode()));
+                            }
                       }else{
                           AwesomeDialog(
                               context: context,

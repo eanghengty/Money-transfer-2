@@ -6,14 +6,18 @@ import 'package:truemoneyversion2/Drawbar_view/location.dart';
 import 'package:truemoneyversion2/Drawbar_view/setting.dart';
 import 'package:truemoneyversion2/Drawbar_view/term_and_condition.dart';
 import 'package:truemoneyversion2/View/agent_post.dart';
-
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:truemoneyversion2/View/agent_transaction_log.dart';
 import 'package:truemoneyversion2/View/agentrequest.dart';
+import 'package:truemoneyversion2/View/agentrequesttran.dart';
 
 import 'package:truemoneyversion2/View/agentusercreatedscreen.dart';
 import 'package:truemoneyversion2/View/notification_agent_screen.dart';
+import 'package:truemoneyversion2/View/processrequesttransaction.dart';
 import 'package:truemoneyversion2/View/sign_in_screen_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AgentHomeScreen extends StatefulWidget {
   const AgentHomeScreen({Key? key}) : super(key: key);
@@ -33,10 +37,161 @@ class _AgentHomeScreenState extends State<AgentHomeScreen> {
     // TODO: implement initState
     super.initState();
     load_home();
+    getDocId();
+    // getid();
+    // createrequestid();
   }
   void dispose(){
     super.dispose();
+
   }
+
+  List<String> name=[];
+  Future getDocId() async {
+    await FirebaseFirestore.instance.collection('customer').where(
+        'uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid).get().then(
+            (snapshot) =>
+            snapshot.docs.forEach((document) {
+              setState(() {
+                name.add(document['fullname']);
+              }
+
+                // print(accountid.length);
+                // listdocument.add(document.reference.id);
+              );
+            })
+    );
+  }
+
+
+  Future addtransactionrequest() async{
+    await FirebaseFirestore.instance.collection('agent').add({
+      'agentuid':name[0],
+      'customeruid':customeruidcontroller.text.trim(),
+      'depositamount':depositamountcontroller.text.trim(),
+      'currencytype':currencytypecontroller.text.trim(),
+      // 'requestid':requestid,
+      'transactionstatus':'pending',
+      'createddate':DateTime.now().toString().split('.'),
+      'withdrawamount':withdrawamountcontroller.text.trim(),
+
+
+
+    });
+  }
+
+  // List<String> listid=[];
+  // Future getid() async {
+  //   await FirebaseFirestore.instance.collection('agent').get().then(
+  //           (snapshot) =>
+  //           snapshot.docs.forEach((document) {
+  //             setState(() {
+  //               listid.add(document['id']);
+  //             }
+  //
+  //               // print(accountid.length);
+  //               // listdocument.add(document.reference.id);
+  //             );
+  //           })
+  //   );
+  // }
+
+  // String requestid='';
+
+  // void createrequestid(){
+  //   for (int i=0; i<listid.length;i++){
+  //     if(int.parse(listid[0])<int.parse(listid[i])){
+  //       setState(() {
+  //         listid[0] = listid[i];
+  //         requestid=(int.parse(listid[0])+1).toString();
+  //         print(listid[i]);
+  //       });
+  //     }
+  //   }
+  //
+  // }
+  final currencytypecontroller=TextEditingController();
+  final customeruidcontroller=TextEditingController();
+  final depositamountcontroller=TextEditingController();
+  final withdrawamountcontroller=TextEditingController();
+
+  Future openeditbox(){
+    return showDialog(context: context, builder: (context)=>AlertDialog(
+      title:Text("Request transaction for customer"),
+      content:SingleChildScrollView(
+        child: Column(
+          children: [
+            TextField(
+              autofocus: true,
+              controller: currencytypecontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Please type usd or khr',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            TextField(
+              controller: customeruidcontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'please type customer id',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            TextField(
+              controller: depositamountcontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'please input the desposit amount, if no put 0',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            TextField(
+              controller: withdrawamountcontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'please input the withdraw amount, if no put 0',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: (){
+          AwesomeDialog(
+              context: context,
+              dialogType: DialogType.info,
+              animType: AnimType.topSlide,
+              showCloseIcon: true,
+              title: "Confirm request for " + customeruidcontroller.text.trim(),
+              desc: "Are you sure to request this?",
+              btnOkOnPress: () {
+                setState(() {
+
+                  addtransactionrequest();
+                  Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const processtransactionrequest() ));
+                });
+              },
+
+          ).show();
+        }, child: Text('Request', style: TextStyle(color: Colors.green),))
+      ],
+    ),
+
+    );
+  }
+
+
   List menu = [ExchangeRate(), TermAndCondition(), Location(),Setting(),SignInScreen()];
   List feature_menu=[AgentPost()];
   Widget feature_row(
@@ -47,8 +202,13 @@ class _AgentHomeScreenState extends State<AgentHomeScreen> {
         required int ID}) {
     return InkWell(
       onTap: (){
-        Navigator.of(context).pushReplacement(
-            CupertinoPageRoute(builder: (ctx) => feature_menu[ID]));
+        if(ID==1){
+          openeditbox();
+        }else{
+          Navigator.of(context).pushReplacement(
+              CupertinoPageRoute(builder: (ctx) => feature_menu[ID]));
+        }
+
       },
       child: Container(
         width: double.infinity,
@@ -324,6 +484,13 @@ class _AgentHomeScreenState extends State<AgentHomeScreen> {
                       animation:
                       'https://assets3.lottiefiles.com/packages/lf20_q0vtqaxf.json',
                       ID:0),
+                  feature_row(
+                      color_num: 900,
+                      title_text: 'Upload request transaction',
+                      description_text: 'When customer come to desposit/withdraw you need to make a request.',
+                      animation:
+                      'https://assets9.lottiefiles.com/packages/lf20_OdVhgq.json',
+                      ID:1),
 
                 ],
               ),
