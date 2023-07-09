@@ -6,7 +6,7 @@ import 'package:truemoneyversion2/Drawbar_view/location.dart';
 import 'package:truemoneyversion2/Drawbar_view/setting.dart';
 import 'package:truemoneyversion2/Drawbar_view/term_and_condition.dart';
 import 'package:truemoneyversion2/View/agent_post.dart';
-import 'package:truemoneyversion2/View/agent_request.dart';
+import 'package:truemoneyversion2/View/adminrequest.dart';
 import 'package:truemoneyversion2/View/agent_transaction_log.dart';
 import 'package:truemoneyversion2/View/agent_user_created_screen.dart';
 import 'package:truemoneyversion2/View/notification_agent_screen.dart';
@@ -95,7 +95,7 @@ class _AgentHomeScreenState extends State<AgentHomeScreen> {
       ),
     );
   }
-  List main_menu_grid=[AgentUserCreatedAccount(),AgentRequest(),AgentTransactionLog()];
+  List main_menu_grid=[AgentUserCreatedAccount(),adminrequest(),AgentTransactionLog()];
   Widget feature_grid(Icon icon_data, String text,{required int id}) {
     return Expanded(
       child: InkWell(

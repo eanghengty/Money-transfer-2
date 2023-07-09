@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:truemoneyversion2/View/register_screen_view.dart';
+import 'package:truemoneyversion2/View/sign_in_screen_view.dart';
 class ConfirmLock extends StatefulWidget {
   const ConfirmLock({Key? key}) : super(key: key);
 
@@ -60,9 +61,45 @@ class _ConfirmLockState extends State<ConfirmLock> {
                   btnOkOnPress: () {
                     FirebaseFirestore.instance.collection('customer').doc(document.reference.id).delete();
                     print("document: "+ document.reference.id + " deleted");
+                    // FirebaseFirestore.instance.collection('passlock').doc(document.reference.id).delete();
+                    // print("document: "+ document.reference.id + " deleted");
                     Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const RegisterString() ));
                   }
               ).show();
+            }else{
+              print(FirebaseAuth.instance.currentUser!.uid);
+            }
+
+          });
+        })
+    );
+  }
+  List<dynamic> getcustomeractivatestatus=[];
+  Future getstatus() async{
+    await FirebaseFirestore.instance.collection('customer').where('uid',isEqualTo: FirebaseAuth.instance.currentUser!.uid).get().then(
+            (snapshot)=>snapshot.docs.forEach((document) {
+          print(document.reference.id);
+          setState(() {
+
+            getcustomeractivatestatus.add(document['accountactivated']);
+            print('customer uid: '+getcustomeractivatestatus[0]);
+
+            if(getcustomeractivatestatus[0]=='no'){
+
+              AwesomeDialog(
+                  context: context,
+                  dialogType: DialogType.warning,
+                  animType: AnimType.topSlide,
+                  showCloseIcon: true,
+                  title: "activating issue",
+                  desc:"Your account is disacivated, please check with agent.",
+                  btnOkOnPress: () {
+                    FirebaseAuth.instance.signOut();
+                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const SignInScreen() ));
+                  }
+              ).show();
+            }else{
+              print(FirebaseAuth.instance.currentUser!.uid);
             }
 
           });
@@ -74,6 +111,7 @@ class _ConfirmLockState extends State<ConfirmLock> {
   void initState(){
     super.initState();
     getDocId();
+    getstatus();
     getcustomer();
   }
   @override
@@ -120,7 +158,7 @@ class _ConfirmLockState extends State<ConfirmLock> {
       return ElevatedButton(
         onPressed: (){
           if(docIDs[1]==passwordlockcontroller1 && docIDs[2]==passwordlockcontroller2 && docIDs[3]==passwordlockcontroller3 && docIDs[4]==passwordlockcontroller4){
-            Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const HomeScreen() ));
+            Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const LoadingToHome() ));
 
           }
           else{

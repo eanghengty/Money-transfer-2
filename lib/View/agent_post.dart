@@ -1,6 +1,7 @@
 import'package:flutter/material.dart';
 import'package:flutter/cupertino.dart';
 import'package:lottie/lottie.dart';
+import 'package:truemoneyversion2/View/adminhomescreen.dart';
 import 'package:truemoneyversion2/View/agent_home_screen.dart';
 
 class AgentPost extends StatefulWidget {
@@ -66,7 +67,7 @@ class _AgentPostState extends State<AgentPost> {
             ),
             onTap: () {
               Navigator.of(context).pushReplacement(
-                  CupertinoPageRoute(builder: (ctx) => const AgentHomeScreen()));
+                  CupertinoPageRoute(builder: (ctx) => const adminhomescreen()));
             },
           ),
         ),

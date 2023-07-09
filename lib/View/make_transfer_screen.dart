@@ -102,6 +102,8 @@ class _MakeTransferState extends State<MakeTransfer> {
       'uidowner':FirebaseAuth.instance.currentUser!.uid,
       'uiddrec':getrecieveramount[3],
       'currency':currencyupdatecontroller,
+      'transendername':getsenderamount[2],
+      'transenderid':getsenderamount[3],
     });
   }
   Future createnotification() async{

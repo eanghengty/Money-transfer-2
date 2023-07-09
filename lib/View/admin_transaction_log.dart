@@ -1,18 +1,20 @@
-import'package:lottie/lottie.dart';
 import'package:flutter/material.dart';
 import'package:flutter/cupertino.dart';
+import'package:lottie/lottie.dart';
+import 'package:truemoneyversion2/View/adminhomescreen.dart';
+import 'package:truemoneyversion2/View/agent_home_screen.dart';
 import 'package:truemoneyversion2/View/home_screen_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class TransactionLog extends StatefulWidget {
-  const TransactionLog({Key? key}) : super(key: key);
+class admintransactionlog extends StatefulWidget {
+  const admintransactionlog({Key? key}) : super(key: key);
 
   @override
-  State<TransactionLog> createState() => _TransactionLogState();
+  State<admintransactionlog> createState() => _AdminTransactionLogState();
 }
 
-class _TransactionLogState extends State<TransactionLog> {
+class _AdminTransactionLogState extends State<admintransactionlog> {
 
   List<String> transaction=[];
   // Future getlog() async{
@@ -37,50 +39,18 @@ class _TransactionLogState extends State<TransactionLog> {
   List<String> listdocument=[];
   int number=0;
   List<String> colorchange=[];
+
   Future getDocId() async{
-    await FirebaseFirestore.instance.collection('transactionlog').where('uidowner',isEqualTo: FirebaseAuth.instance.currentUser!.uid).get().then(
+    await FirebaseFirestore.instance.collection('transactionlog').get().then(
             (snapshot)=>snapshot.docs.forEach((document) {
           setState(() {
             loglistdate.add(document['trandate']);
             loglistrec.add(document['tranreceiver']);
-            if(document['currency']=='USD' && document['tranreceiver'] != FirebaseAuth.instance.currentUser!.uid){
-              loglistamount.add("- "+ document['tranamount' ]+' USD');
-              colorchange.add('1');
-            }else if(document['currency']=='USD' && document['tranreceiver'] == FirebaseAuth.instance.currentUser!.uid){
-              loglistamount.add("+ " + document['tranamount' ]+' USD');
-              colorchange.add('0');
-            }else if(document['currency']=='KHR' && document['tranreceiver'] != FirebaseAuth.instance.currentUser!.uid){
-              loglistamount.add("- "+ document['tranamount' ]+' KHR');
-              colorchange.add('1');
-            }else if(document['currency']=='KHR' && document['tranreceiver'] == FirebaseAuth.instance.currentUser!.uid) {
+            if(document['currency']=='USD' ){
+              loglistamount.add(document['tranamount' ]+' USD');
+            }else if(document['currency']=='KHR') {
               loglistamount.add("+ " + document['tranamount' ] + ' KHR');
-              colorchange.add('0');
-            }
-            print(loglistdate[0]);
-            // print(accountid.length);
-            // listdocument.add(document.reference.id);
-          });
-        })
-    );
-  }
-  Future getDocId2() async{
-    await FirebaseFirestore.instance.collection('transactionlog').where('uiddrec',isEqualTo: FirebaseAuth.instance.currentUser!.uid).get().then(
-            (snapshot)=>snapshot.docs.forEach((document) {
-          setState(() {
-            loglistdate.add(document['trandate']);
-            loglistrec.add(document['tranreceiver']);
-            if(document['currency']=='USD' && document['tranreceiver'] == FirebaseAuth.instance.currentUser!.uid){
-              loglistamount.add("- "+ document['tranamount' ]+' USD');
-              colorchange.add('0');
-            }else if(document['currency']=='USD' && document['tranreceiver'] != FirebaseAuth.instance.currentUser!.uid){
-              loglistamount.add("+ " + document['tranamount' ]+' USD');
-              colorchange.add('1');
-            }else if(document['currency']=='KHR' && document['tranreceiver'] == FirebaseAuth.instance.currentUser!.uid){
-              loglistamount.add("- "+ document['tranamount' ]+' KHR');
-              colorchange.add('0');
-            }else if(document['currency']=='KHR' && document['tranreceiver'] != FirebaseAuth.instance.currentUser!.uid) {
-              loglistamount.add("+ " + document['tranamount' ] + ' KHR');
-              colorchange.add('1');
+
             }
             print(loglistdate[0]);
             // print(accountid.length);
@@ -90,12 +60,13 @@ class _TransactionLogState extends State<TransactionLog> {
     );
   }
 
+
   void initState(){
     getDocId();
-    getDocId2();
+
     super.initState();
   }
-  Widget log_show({required String date, required String log,required String name, required colors}){
+  Widget log_show({required String date, required String log,required String name}){
     return Container(
 
       child: Column(
@@ -126,7 +97,7 @@ class _TransactionLogState extends State<TransactionLog> {
                       Expanded(child: Text(log,
                         style:TextStyle(
                           // color: log >= 0? Colors.green:Colors.red,
-                          color: colors=='1'? Colors.red:Colors.red,
+                          color: Colors.green
                         ),
                         textAlign: TextAlign.end,),)
                     ],
@@ -144,7 +115,7 @@ class _TransactionLogState extends State<TransactionLog> {
         appBar: AppBar(
           title: Center(
             child: Text(
-              'MTA Transaction Log',
+              'Management transaction log',
               style: TextStyle(color: Colors.white),
             ),
           ),
@@ -156,7 +127,7 @@ class _TransactionLogState extends State<TransactionLog> {
             ),
             onTap: () {
               Navigator.of(context).pushReplacement(
-                  CupertinoPageRoute(builder: (ctx) => const HomeScreen()));
+                  CupertinoPageRoute(builder: (ctx) => const adminhomescreen()));
             },
           ),
         ),
@@ -183,30 +154,30 @@ class _TransactionLogState extends State<TransactionLog> {
         //       ),
 
 
-            // ],
+        // ],
 
         //   ),
         // )
-      body:loglistamount.length==0?Center(child:Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 150,
-            height: 350,
-            child:Lottie.network('https://assets9.lottiefiles.com/temp/lf20_U1CPFF.json'),
-          ),
-          SizedBox(height: 16,),
-          Text('Currently, no transaction log',
-            style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600
-            ),)
-        ],
-      )): ListView.builder(
-          itemCount: loglistamount.length,
-          itemBuilder: (context,index){
-            return log_show(date:loglistdate[index],log:loglistamount[index],name:loglistrec[index],colors:colorchange[index]);
-          })
+        body:loglistamount.length==0?Center(child:Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 150,
+              height: 350,
+              child:Lottie.network('https://assets9.lottiefiles.com/temp/lf20_U1CPFF.json'),
+            ),
+            SizedBox(height: 16,),
+            Text('Currently, no transaction log',
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600
+              ),)
+          ],
+        )): ListView.builder(
+            itemCount: loglistamount.length,
+            itemBuilder: (context,index){
+              return log_show(date:loglistdate[index],log:loglistamount[index],name:loglistrec[index]);
+            })
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:truemoneyversion2/View/agent_home_screen.dart';
 import'package:truemoneyversion2/View/home_screen_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:truemoneyversion2/View/loadingtoadmin.dart';
 class LoadingToHome extends StatefulWidget {
   const LoadingToHome({Key? key}) : super(key: key);
 
@@ -33,7 +34,7 @@ class _LoadingToHomeState extends State<LoadingToHome> {
           setState(() {
             docIDs.add(document['userrole']);
           });
-          shift_to_home();
+
         })
     );
   }
@@ -45,18 +46,22 @@ class _LoadingToHomeState extends State<LoadingToHome> {
     getDocId();
     // TODO: implement initState
     super.initState();
+    shift_to_home();
+
 
   }
   shift_to_home(){
     if(docIDs[1]=='agent'){
-      Future.delayed(Duration(seconds: 5)).then((value) =>
+      Future.delayed(Duration(seconds: 7)).then((value) =>
           Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const AgentHomeScreen() )));
     }else if(docIDs[1]=='admin'){
-      Future.delayed(Duration(seconds: 5)).then((value) =>
-      Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const adminhomescreen() )));
+
+        Future.delayed(Duration(seconds: 7)).then((value) =>
+            Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const loadingtoadmin() )));
+
     }
       else{
-      Future.delayed(Duration(seconds: 5)).then((value) =>
+      Future.delayed(Duration(seconds: 7)).then((value) =>
           Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const HomeScreen() )));
     }
   }

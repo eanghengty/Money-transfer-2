@@ -5,13 +5,17 @@ import 'package:truemoneyversion2/Drawbar_view/exchange_rate.dart';
 import 'package:truemoneyversion2/Drawbar_view/location.dart';
 import 'package:truemoneyversion2/Drawbar_view/setting.dart';
 import 'package:truemoneyversion2/Drawbar_view/term_and_condition.dart';
+import 'package:truemoneyversion2/View/admin_transaction_log.dart';
+import 'package:truemoneyversion2/View/admin_user_created_screen.dart';
 import 'package:truemoneyversion2/View/agent_post.dart';
-import 'package:truemoneyversion2/View/agent_request.dart';
+import 'package:truemoneyversion2/View/adminrequest.dart';
 import 'package:truemoneyversion2/View/agent_transaction_log.dart';
 import 'package:truemoneyversion2/View/agent_user_created_screen.dart';
 import 'package:truemoneyversion2/View/notification_agent_screen.dart';
 import 'package:truemoneyversion2/View/sign_in_screen_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class adminhomescreen extends StatefulWidget {
   const adminhomescreen({Key? key}) : super(key: key);
@@ -21,6 +25,27 @@ class adminhomescreen extends StatefulWidget {
 }
 
 class _adminhomescreenState extends State<adminhomescreen> {
+
+  List<String> admininfo=[];
+  Future getDocId() async{
+    await FirebaseFirestore.instance.collection('customer').where('userrole',isEqualTo: 'admin').get().then(
+            (snapshot)=>snapshot.docs.forEach((document) {
+          setState(() {
+              admininfo.add(document['fullname']);
+              admininfo.add(document['accountid']);
+
+            }
+
+            // print(accountid.length);
+            // listdocument.add(document.reference.id);
+          );
+        })
+    );
+  }
+
+
+
+
   var is_load_home = true;
   void signout(){
     FirebaseAuth.instance.signOut();
@@ -30,7 +55,9 @@ class _adminhomescreenState extends State<adminhomescreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    load_home();
+    getDocId();
+    // load_home();
+
   }
   void dispose(){
     super.dispose();
@@ -95,7 +122,7 @@ class _adminhomescreenState extends State<adminhomescreen> {
       ),
     );
   }
-  List main_menu_grid=[AgentUserCreatedAccount(),AgentRequest(),AgentTransactionLog()];
+  List main_menu_grid=[adminusercreatedaccount(),adminrequest(),admintransactionlog()];
   Widget feature_grid(Icon icon_data, String text,{required int id}) {
     return Expanded(
       child: InkWell(
@@ -157,7 +184,7 @@ class _adminhomescreenState extends State<adminhomescreen> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            'Money Transfer Agent',
+            'Admin Mgmt',
             style: TextStyle(color: Colors.white),
           ),
           // leading: Icon(Icons.menu_outlined,color: Colors.white,),
@@ -194,7 +221,7 @@ class _adminhomescreenState extends State<adminhomescreen> {
                                       child: CircleAvatar(
                                         radius: 50.0,
                                         backgroundImage: NetworkImage(
-                                            'https://yt3.ggpht.com/yti/AHXOFjVZBdHodAPo6iTd5-gErFvDOEjLTWTjU4ATNhE3lw=s88-c-k-c0x00ffffff-no-rj-mo'),
+                                            'https://www.istockphoto.com/photos/user-profile'),
                                       ),
                                       width: 80,
                                       height: 80,
@@ -204,12 +231,12 @@ class _adminhomescreenState extends State<adminhomescreen> {
                                         borderRadius: BorderRadius.circular(50),
                                       )),
                                   SizedBox(height: 16),
-                                  Text('Welcome, Agent 1',
+                                  Text('Welcome, ',
                                       style: TextStyle(
                                           fontSize: 16.0,
                                           fontWeight: FontWeight.w400,
                                           color: Colors.white)),
-                                  Text('User AID: 10010',
+                                  Text('AID: ',
                                       style: TextStyle(
                                           fontSize: 12.0,
                                           fontWeight: FontWeight.w400,
@@ -310,7 +337,7 @@ class _adminhomescreenState extends State<adminhomescreen> {
                               color: Colors.white,
                               size: 48,
                             ),
-                            'Transaction Request',id:1),
+                            'Permission request',id:1),
                       ],
                     ),
                   ),

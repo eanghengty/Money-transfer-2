@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:truemoneyversion2/View/agent_verification.dart';
+import 'package:truemoneyversion2/View/confirm_lock.dart';
 import 'package:truemoneyversion2/View/loading_to_home_screen.dart';
 import 'package:truemoneyversion2/View/register_screen_view.dart';
 import'package:truemoneyversion2/View/verify_code_screen.dart';
@@ -40,7 +41,7 @@ class _SignInScreenState extends State<SignInScreen> {
           email: emailcontroller.text.trim(),
           password: passwordcontroller.text.trim());
       Navigator.of(context).pushReplacement(
-          CupertinoPageRoute(builder: (ctx) => const LoadingToHome()));
+          CupertinoPageRoute(builder: (ctx) => const ConfirmLock()));
     } on FirebaseAuthException catch(error) {
       AwesomeDialog(
           context: context,

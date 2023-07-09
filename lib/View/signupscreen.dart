@@ -33,7 +33,7 @@ class _signupState extends State<signup> {
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
               email: emailcontroller.text.trim(),
               password: passwordcontroller.text.trim());
-          adduserdetail();
+
           Navigator.of(context).pushReplacement(CupertinoPageRoute(
               builder: (ctx) => const RegisterString()));
 
@@ -100,11 +100,7 @@ class _signupState extends State<signup> {
       return false;
     }
   }
-  Future adduserdetail() async{
-    await FirebaseFirestore.instance.collection('customer').add({
 
-      'uid': "",
-    });}
 
   Widget build(BuildContext context) {
     return Scaffold(

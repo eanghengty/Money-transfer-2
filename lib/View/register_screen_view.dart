@@ -122,15 +122,17 @@ class _RegisterStringState extends State<RegisterString> {
             (snapshot)=>snapshot.docs.forEach((document) {
           setState(() {
             phonenumber.add(document['phonenumber']);
-            print("total phonen: " + phonenumber.length.toString());
+            print("total phone: " + phonenumber.length.toString());
           });
 
         })
     );}
+
+
   void initState(){
     // emailverfied();
     getphonenumber();
-    getcustomer();
+    // getcustomer();
 
     super.initState();
   }
@@ -149,41 +151,54 @@ class _RegisterStringState extends State<RegisterString> {
       'accountid':phonenumbercontroller.text.trim(),
       'createddate':DateTime.now().toString(),
       'status':"enabled",
-      'accountactivated':'yes'
+      'accountactivated':'yes',
+      'accountstatus':'online',
+      'verifystatus':'no'
+
+    });
+  }
+  Future addusermoredetail() async{
+    await FirebaseFirestore.instance.collection('accountverify').add({
+      'accountstatus':'yes',
+      'uid':FirebaseAuth.instance.currentUser!.uid,
+      'verifystatus':'no'
 
     });
   }
 
-  List<dynamic> getcustomerinfo=[];
-  Future getcustomer() async{
-    await FirebaseFirestore.instance.collection('customer').where('uid',isEqualTo: FirebaseAuth.instance.currentUser!.uid).get().then(
-            (snapshot)=>snapshot.docs.forEach((document) {
-          print(document.reference.id);
-          setState(() {
 
-            getcustomerinfo.add(document['uid']);
-            print('customer uid: '+getcustomerinfo[0]);
+  // List<dynamic> getcustomerinfo=[];
+  // Future getcustomer() async{
+  //   await FirebaseFirestore.instance.collection('customer').where('uid',isEqualTo: FirebaseAuth.instance.currentUser!.uid).get().then(
+  //           (snapshot)=>snapshot.docs.forEach((document) {
+  //         print(document.reference.id);
+  //         setState(() {
+  //
+  //           getcustomerinfo.add(document['uid']);
+  //           print('customer uid: '+getcustomerinfo[0]);
+  //
+  //           if(FirebaseAuth.instance.currentUser!.uid == getcustomerinfo[0]){
+  //
+  //             AwesomeDialog(
+  //                 context: context,
+  //                 dialogType: DialogType.warning,
+  //                 animType: AnimType.topSlide,
+  //                 showCloseIcon: true,
+  //                 title: "Your account info is already register",
+  //                 desc:"Please continue to set up password.",
+  //                 btnOkOnPress: () {
+  //
+  //                   Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const FirstLock()));
+  //                 }
+  //             ).show();
+  //           }
+  //
+  //         });
+  //       })
+  //   );
+  // }
 
-            if(FirebaseAuth.instance.currentUser!.uid == getcustomerinfo[0]){
 
-              AwesomeDialog(
-                  context: context,
-                  dialogType: DialogType.warning,
-                  animType: AnimType.topSlide,
-                  showCloseIcon: true,
-                  title: "Your account info is already register",
-                  desc:"Please continue to set up password.",
-                  btnOkOnPress: () {
-
-                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const FirstLock()));
-                  }
-              ).show();
-            }
-
-          });
-        })
-    );
-  }
 
   List<String> phone=[];
   void passwordconfirmedone(){
@@ -462,6 +477,7 @@ class _RegisterStringState extends State<RegisterString> {
                        print(phone.length);
                         if(passwordconfirmtwo()){
                         adduserdetail();
+                        addusermoredetail();
                         Navigator.of(context).pushReplacement(CupertinoPageRoute(
                             builder: (ctx) => const VerifyCode()));
                       }else{

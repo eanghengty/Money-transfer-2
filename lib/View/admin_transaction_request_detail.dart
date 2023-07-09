@@ -4,14 +4,14 @@ import'package:lottie/lottie.dart';
 import 'package:truemoneyversion2/View/agent_home_screen.dart';
 import 'package:truemoneyversion2/View/adminrequest.dart';
 
-class TransactionDetails extends StatefulWidget {
-  const TransactionDetails({Key? key}) : super(key: key);
+class admintransactiondetail extends StatefulWidget {
+  const admintransactiondetail({Key? key}) : super(key: key);
 
   @override
-  State<TransactionDetails> createState() => _TransactionDetailsState();
+  State<admintransactiondetail> createState() => admintransactiondetailstate();
 }
 
-class _TransactionDetailsState extends State<TransactionDetails> {
+class admintransactiondetailstate extends State<admintransactiondetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

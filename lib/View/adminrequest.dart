@@ -1,16 +1,17 @@
 import'package:flutter/material.dart';
 import'package:flutter/cupertino.dart';
 import'package:lottie/lottie.dart';
+import 'package:truemoneyversion2/View/adminhomescreen.dart';
 import 'package:truemoneyversion2/View/agent_home_screen.dart';
 import 'package:truemoneyversion2/View/agent_transaction_request_detail.dart';
-class AgentRequest extends StatefulWidget {
-  const AgentRequest({Key? key}) : super(key: key);
+class adminrequest extends StatefulWidget {
+  const adminrequest({Key? key}) : super(key: key);
 
   @override
-  State<AgentRequest> createState() => _AgentRequestState();
+  State<adminrequest> createState() => _adminrequestState();
 }
 
-class _AgentRequestState extends State<AgentRequest> {
+class _adminrequestState extends State<adminrequest> {
   @override
   Widget list_request(){
     return Container(
@@ -93,7 +94,7 @@ class _AgentRequestState extends State<AgentRequest> {
           ),
           onTap: () {
             Navigator.of(context).pushReplacement(
-                CupertinoPageRoute(builder: (ctx) => const AgentHomeScreen()));
+                CupertinoPageRoute(builder: (ctx) => const adminhomescreen()));
           },
         ),
       ),
