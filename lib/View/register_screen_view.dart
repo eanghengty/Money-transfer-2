@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:truemoneyversion2/View/confirm_lock.dart';
+import 'package:truemoneyversion2/View/first_lock.dart';
 import 'package:truemoneyversion2/View/sign_in_screen_view.dart';
 import 'package:lottie/lottie.dart';
 import'package:file_picker/file_picker.dart';
@@ -68,12 +70,14 @@ class _RegisterStringState extends State<RegisterString> {
   final passwordcontroller=TextEditingController();
   final confirmedpasswordcontroller=TextEditingController();
   final fullnamecontroller=TextEditingController();
-  final dateofbirthcontroller=TextEditingController();
+  String dateofbirthcontroller= "";
+  DateTime showdate1=DateTime.now();
+  String showdate2="";
   final jobselectioncontroller=TextEditingController();
   final phonenumbercontroller=TextEditingController();
-  final usdmoneycontroller="0";
+  final usdmoneycontroller="0.00";
 
-  final khmoneycontroller="0";
+  final khmoneycontroller="0.00";
   final transactioncontroller="0";
   final accountcreateddate=DateTime.timestamp();
   final currentuser = FirebaseAuth.instance;
@@ -126,6 +130,7 @@ class _RegisterStringState extends State<RegisterString> {
   void initState(){
     // emailverfied();
     getphonenumber();
+    getcustomer();
 
     super.initState();
   }
@@ -133,7 +138,7 @@ class _RegisterStringState extends State<RegisterString> {
   Future adduserdetail() async{
     await FirebaseFirestore.instance.collection('customer').add({
       'fullname':fullnamecontroller.text.trim(),
-      'dateofbirth':dateofbirthcontroller.text.trim(),
+      'dateofbirth':dateofbirthcontroller,
       'jobselection':jobselectioncontroller.text.trim(),
       'phonenumber':phonenumbercontroller.text.trim(),
       'enmoney':usdmoneycontroller,
@@ -142,11 +147,43 @@ class _RegisterStringState extends State<RegisterString> {
       'userrole':userrolecontroller,
       'userverify':userverifycontroller,
       'accountid':phonenumbercontroller.text.trim(),
-      'createddate':DateTime.now().toString()
+      'createddate':DateTime.now().toString(),
+      'status':"enabled",
+      'accountactivated':'yes'
+
     });
   }
 
+  List<dynamic> getcustomerinfo=[];
+  Future getcustomer() async{
+    await FirebaseFirestore.instance.collection('customer').where('uid',isEqualTo: FirebaseAuth.instance.currentUser!.uid).get().then(
+            (snapshot)=>snapshot.docs.forEach((document) {
+          print(document.reference.id);
+          setState(() {
 
+            getcustomerinfo.add(document['uid']);
+            print('customer uid: '+getcustomerinfo[0]);
+
+            if(FirebaseAuth.instance.currentUser!.uid == getcustomerinfo[0]){
+
+              AwesomeDialog(
+                  context: context,
+                  dialogType: DialogType.warning,
+                  animType: AnimType.topSlide,
+                  showCloseIcon: true,
+                  title: "Your account info is already register",
+                  desc:"Please continue to set up password.",
+                  btnOkOnPress: () {
+
+                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const FirstLock()));
+                  }
+              ).show();
+            }
+
+          });
+        })
+    );
+  }
 
   List<String> phone=[];
   void passwordconfirmedone(){
@@ -176,9 +213,10 @@ class _RegisterStringState extends State<RegisterString> {
     passwordcontroller.dispose();
     confirmedpasswordcontroller.dispose();
     fullnamecontroller.dispose();
-    dateofbirthcontroller.dispose();
+
     jobselectioncontroller.dispose();
     phonenumbercontroller.dispose();
+
     super.dispose();
   }
 
@@ -212,11 +250,17 @@ class _RegisterStringState extends State<RegisterString> {
                     height: 200,
                     child: Lottie.network(
                         'https://assets6.lottiefiles.com/packages/lf20_wzAk0pBKAp.json')),
-                TextField(
+                TextFormField(
                   controller: fullnamecontroller,
+                  validator: (value){
+                    if(value!.isEmpty){
+                      return "Enter the email";
+                    }
+                  },
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Full name',
+
                   ),
                 ),
                 SizedBox(
@@ -251,23 +295,71 @@ class _RegisterStringState extends State<RegisterString> {
                 SizedBox(
                   height: 16,
                 ),
-                TextField(
+                TextFormField(
+                  keyboardType: TextInputType.number,
                   controller: phonenumbercontroller,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Phone Number',
+
                   ),
                 ),
                 SizedBox(
                   height: 16,
                 ),
-                TextField(
-                  controller: dateofbirthcontroller,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Date of birth',
+              TextField(
+                    enabled: false,
+
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Date of birth: ' + showdate2,
+                    ),
                   ),
+                SizedBox(
+                  height: 16,
                 ),
+                MaterialButton(
+                      onPressed: (){
+                        showDatePicker(context: context,initialDate: DateTime.now(),firstDate: DateTime(1900),lastDate: DateTime(2030)).then((value) =>
+                            setState((){
+                              showdate1=value!;
+                              showdate2=showdate1.toString();
+                              dateofbirthcontroller=showdate2;
+                            }));},
+                      color: Colors.blue,
+                      child:Padding(
+                        padding: EdgeInsets.all(15.0),
+                        child: Text('Choose Date',style: TextStyle(color: Colors.white,fontSize: 16),),
+
+                      )
+                  ),
+                // Row(
+                //   children: [
+                //     TextField(
+                //       enabled: false,
+                //
+                //       decoration: InputDecoration(
+                //         border: OutlineInputBorder(),
+                //         labelText: 'Date of birth: ' + showdate2,
+                //       ),
+                //     ),
+                //     MaterialButton(
+                //         onPressed: (){
+                //           showDatePicker(context: context,initialDate: DateTime.now(),firstDate: DateTime(2000),lastDate: DateTime(2010)).then((value) =>
+                //               setState((){
+                //                 showdate1=value!;
+                //                 showdate2=showdate1.toString();
+                //                 dateofbirthcontroller=showdate2;
+                //               }));},
+                //         color: Colors.blue,
+                //         child:Padding(
+                //           padding: EdgeInsets.all(15.0),
+                //           child: Text('Choose Date',style: TextStyle(color: Colors.white,fontSize: 16),),
+                //
+                //         )
+                //     ),
+                //   ],
+                // ),
                 SizedBox(
                   height: 16,
                 ),
@@ -365,7 +457,9 @@ class _RegisterStringState extends State<RegisterString> {
                       desc:"Please kindly wait.",
                       btnCancelOnPress: () {},
                       btnOkOnPress: () {
-                        passwordconfirmedone();
+
+                          passwordconfirmedone();
+                       print(phone.length);
                         if(passwordconfirmtwo()){
                         adduserdetail();
                         Navigator.of(context).pushReplacement(CupertinoPageRoute(
@@ -378,7 +472,9 @@ class _RegisterStringState extends State<RegisterString> {
                               showCloseIcon: true,
                               title: "This phone number has already use",
                               desc:"Please kindly try another.",
-                              btnCancelOnPress: () {},).show();
+                              btnCancelOnPress: () {
+                                phone.clear();
+                              },).show();
                       }
 
                           }

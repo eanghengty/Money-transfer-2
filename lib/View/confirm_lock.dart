@@ -6,6 +6,7 @@ import 'package:truemoneyversion2/View/loading_to_home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:truemoneyversion2/View/register_screen_view.dart';
 class ConfirmLock extends StatefulWidget {
   const ConfirmLock({Key? key}) : super(key: key);
 
@@ -37,9 +38,43 @@ class _ConfirmLockState extends State<ConfirmLock> {
         })
     );
   }
+  List<dynamic> getcustomerinfo=[];
+  Future getcustomer() async{
+    await FirebaseFirestore.instance.collection('customer').where('uid',isEqualTo: '').get().then(
+            (snapshot)=>snapshot.docs.forEach((document) {
+          print(document.reference.id);
+          setState(() {
+
+            getcustomerinfo.add(document['uid']);
+            print('customer uid: '+getcustomerinfo[0]);
+
+            if(FirebaseAuth.instance.currentUser!.uid != getcustomerinfo[0]){
+
+              AwesomeDialog(
+                  context: context,
+                  dialogType: DialogType.warning,
+                  animType: AnimType.topSlide,
+                  showCloseIcon: true,
+                  title: "Your account info is valid, please fill in to register",
+                  desc:"Please try again",
+                  btnOkOnPress: () {
+                    FirebaseFirestore.instance.collection('customer').doc(document.reference.id).delete();
+                    print("document: "+ document.reference.id + " deleted");
+                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const RegisterString() ));
+                  }
+              ).show();
+            }
+
+          });
+        })
+    );
+  }
+
+
   void initState(){
     super.initState();
     getDocId();
+    getcustomer();
   }
   @override
   Widget num_button({required String text, Icon icon_data=const Icon(Icons.done_rounded,size:16,color: Colors.white,)}){
@@ -85,7 +120,8 @@ class _ConfirmLockState extends State<ConfirmLock> {
       return ElevatedButton(
         onPressed: (){
           if(docIDs[1]==passwordlockcontroller1 && docIDs[2]==passwordlockcontroller2 && docIDs[3]==passwordlockcontroller3 && docIDs[4]==passwordlockcontroller4){
-            Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const LoadingToHome() ));
+            Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const HomeScreen() ));
+
           }
           else{
             AwesomeDialog(
@@ -166,7 +202,8 @@ class _ConfirmLockState extends State<ConfirmLock> {
           backgroundColor: Colors.transparent,
           bottomOpacity: 0,
           elevation: 0,),
-        body: docIDs.length==5? SingleChildScrollView(
+        body:
+        docIDs.length==5? SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.all(16),
             child:Column(
@@ -243,7 +280,8 @@ class _ConfirmLockState extends State<ConfirmLock> {
               ],
             ),
           ),
-        ) :  Container(
+        ) :
+        Container(
             padding: EdgeInsets.all(16),
             child:Column(
               children: [

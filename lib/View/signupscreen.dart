@@ -7,6 +7,7 @@ import 'package:truemoneyversion2/View/sign_in_screen_view.dart';
 import'package:truemoneyversion2/View/verify_code_screen.dart';
 import'package:flutter/cupertino.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 class signup extends StatefulWidget {
   const signup({Key? key}) : super(key: key);
 
@@ -27,26 +28,48 @@ class _signupState extends State<signup> {
   }
   Future signup() async{
     if(passwordconfirmed()){
-      try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: emailcontroller.text.trim(),
-            password: passwordcontroller.text.trim());
-
+      if(passwordlongerthan6()){
+        try {
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+              email: emailcontroller.text.trim(),
+              password: passwordcontroller.text.trim());
+          adduserdetail();
           Navigator.of(context).pushReplacement(CupertinoPageRoute(
               builder: (ctx) => const RegisterString()));
 
-      } on FirebaseAuthException catch(error){
+        } on FirebaseAuthException catch(error){
+          AwesomeDialog(
+              context: context,
+              dialogType: DialogType.warning,
+              animType: AnimType.topSlide,
+              showCloseIcon: true,
+              title: "Error",
+              desc: error.toString(),
+              btnCancelOnPress: () {},
+              btnOkOnPress: () {}
+          ).show();
+        }
+      }else if (!passwordlongerthan6()){
         AwesomeDialog(
             context: context,
             dialogType: DialogType.warning,
             animType: AnimType.topSlide,
             showCloseIcon: true,
-            title: "Error",
-            desc: error.toString(),
+            title: "Password not secure",
+            desc: "Please make it longer than 6 to improve your account security.",
             btnCancelOnPress: () {},
             btnOkOnPress: () {}
         ).show();
       }
+
+    }
+  }
+  bool passwordlongerthan6(){
+    if(passwordcontroller.text.trim().toString().length>6){
+      return true;
+    }
+    else{
+      return false;
     }
   }
   bool passwordconfirmed(){
@@ -77,13 +100,20 @@ class _signupState extends State<signup> {
       return false;
     }
   }
+  Future adduserdetail() async{
+    await FirebaseFirestore.instance.collection('customer').add({
+
+      'uid': "",
+    });}
 
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title:Text(''),
           backgroundColor: Colors.transparent,
           bottomOpacity: 0,
+
           elevation: 0,),
+        backgroundColor: Colors.grey[100],
         body: SingleChildScrollView(
           child: Container(
               padding: EdgeInsets.all(16),
@@ -115,7 +145,7 @@ class _signupState extends State<signup> {
                           obscureText: true,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: 'password',
+                            labelText: 'password require long than 6',
                           ),),
                         SizedBox(height: 16,),
                         TextField(
@@ -195,6 +225,7 @@ class _signupState extends State<signup> {
                                   desc: "You already created an account?",
                                   btnCancelOnPress: (){},
                                   btnOkOnPress: (){
+
                                     Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const SignInScreen() ));
                                   }
                               ).show();}),

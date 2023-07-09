@@ -37,15 +37,41 @@ class _TransactionLogState extends State<TransactionLog> {
   List<String> listdocument=[];
   int number=0;
   Future getDocId() async{
-    await FirebaseFirestore.instance.collection('transactionlog').where('uid',isEqualTo: FirebaseAuth.instance.currentUser!.uid).get().then(
+    await FirebaseFirestore.instance.collection('transactionlog').where('uidowner',isEqualTo: FirebaseAuth.instance.currentUser!.uid).get().then(
             (snapshot)=>snapshot.docs.forEach((document) {
           setState(() {
-            loglistdate.add(document['date']);
+            loglistdate.add(document['trandate']);
             loglistrec.add(document['tranreceiver']);
-            if(document['currency']=='USD'){
-              loglistamount.add(document['tranamount' ]+'USD');
-            }else if(document['currency']=='USD'){
-              loglistamount.add(document['tranamount' ]+'KHR');
+            if(document['currency']=='USD' && document['tranreceiver'] != FirebaseAuth.instance.currentUser!.uid){
+              loglistamount.add("- "+ document['tranamount' ]+' USD');
+            }else if(document['currency']=='USD' && document['tranreceiver'] == FirebaseAuth.instance.currentUser!.uid){
+              loglistamount.add("+ " + document['tranamount' ]+' USD');
+            }else if(document['currency']=='KHR' && document['tranreceiver'] != FirebaseAuth.instance.currentUser!.uid){
+              loglistamount.add("- "+ document['tranamount' ]+' KHR');
+            }else if(document['currency']=='KHR' && document['tranreceiver'] == FirebaseAuth.instance.currentUser!.uid) {
+              loglistamount.add("+ " + document['tranamount' ] + ' KHR');
+            }
+            print(loglistdate[0]);
+            // print(accountid.length);
+            // listdocument.add(document.reference.id);
+          });
+        })
+    );
+  }
+  Future getDocId2() async{
+    await FirebaseFirestore.instance.collection('transactionlog').where('uiddrec',isEqualTo: FirebaseAuth.instance.currentUser!.uid).get().then(
+            (snapshot)=>snapshot.docs.forEach((document) {
+          setState(() {
+            loglistdate.add(document['trandate']);
+            loglistrec.add(document['tranreceiver']);
+            if(document['currency']=='USD' && document['tranreceiver'] == FirebaseAuth.instance.currentUser!.uid){
+              loglistamount.add("- "+ document['tranamount' ]+' USD');
+            }else if(document['currency']=='USD' && document['tranreceiver'] != FirebaseAuth.instance.currentUser!.uid){
+              loglistamount.add("+ " + document['tranamount' ]+' USD');
+            }else if(document['currency']=='KHR' && document['tranreceiver'] == FirebaseAuth.instance.currentUser!.uid){
+              loglistamount.add("- "+ document['tranamount' ]+' KHR');
+            }else if(document['currency']=='KHR' && document['tranreceiver'] != FirebaseAuth.instance.currentUser!.uid) {
+              loglistamount.add("+ " + document['tranamount' ] + ' KHR');
             }
             print(loglistdate[0]);
             // print(accountid.length);
@@ -57,6 +83,7 @@ class _TransactionLogState extends State<TransactionLog> {
 
   void initState(){
     getDocId();
+    getDocId2();
     super.initState();
   }
   Widget log_show({required String date, required String log,required String name}){
@@ -83,7 +110,7 @@ class _TransactionLogState extends State<TransactionLog> {
                         children: [
                           Icon(Icons.shopping_basket_outlined),
                           SizedBox(width: 10,),
-                          Text('Agent1'),
+                          Text(name),
                           SizedBox(width: 10,),
                         ],
                       )),

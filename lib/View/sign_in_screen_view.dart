@@ -18,13 +18,14 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  Future getDocId() async{
-    await FirebaseFirestore.instance.collection('customer')..get().then(
-            (snapshot)=>snapshot.docs.forEach((document) {
-          print(document['fullname']);
-
-        })
-    );}
+  final formfield = GlobalKey<FormState>();
+  // Future getDocId() async{
+  //   await FirebaseFirestore.instance.collection('customer').get().then(
+  //           (snapshot)=>snapshot.docs.forEach((document) {
+  //         print(document['fullname']);
+  //
+  //       })
+  //   );}
   @override
   final emailcontroller = TextEditingController();
   final passwordcontroller = TextEditingController();
@@ -56,7 +57,7 @@ class _SignInScreenState extends State<SignInScreen> {
   }
   void initState(){
     super.initState();
-    getDocId();
+    // getDocId();
   }
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,6 +65,7 @@ class _SignInScreenState extends State<SignInScreen> {
       backgroundColor: Colors.transparent,
       bottomOpacity: 0,
       elevation: 0,),
+      backgroundColor: Colors.grey[100],
       body: SingleChildScrollView(
         child: Container(
             padding: EdgeInsets.all(16),
@@ -75,7 +77,9 @@ class _SignInScreenState extends State<SignInScreen> {
                   height: 200,
                 ),
                 SingleChildScrollView(
-                  child: Column(
+                  child: Form(
+                      child:Column(
+                    key: formfield,
                     children: [
                       Text('Sign in by email', style:
                       TextStyle(
@@ -83,19 +87,48 @@ class _SignInScreenState extends State<SignInScreen> {
 
                       )),
                       SizedBox(height: 16),
-                      TextField(
+
+                      TextFormField(
+
+                        keyboardType: TextInputType.emailAddress,
                         controller: emailcontroller,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Email',
-                        ),),
+
+                        ),
+                        validator: (value){
+                          bool emailvalid= RegExp(r"^/^\S+@\S+\.\S+$/").hasMatch(value!);
+                          if(value.isEmpty){
+                            return "Enter the email";
+                          }
+
+                          if(!emailvalid){
+                            return "Enter the valid email";
+                          }
+
+
+                        },
+
+                      ),
                       SizedBox(height: 16,),
-                      TextField(
+                      TextFormField(
+
+                        validator: (value){
+                          bool passwordvalid= RegExp(r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$").hasMatch(value!);
+                          if(value.isEmpty){
+                            return "Enter the password";
+                          }
+
+                          if(!passwordvalid){
+                            return "invalid";
+                          }
+                        },
                         controller: passwordcontroller,
                         obscureText: true,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'password',
+                          labelText: 'password must be longer than 6',
                         ),),
                       SizedBox(height: 16,),
                       // Text('Tap on this "done" button to verify the code that send to your number.'),
@@ -191,7 +224,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       SizedBox(height: 16,),
 
                     ],
-                  ),
+                  )),
                 )
               ],
             )

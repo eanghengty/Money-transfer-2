@@ -1,6 +1,7 @@
 import'package:flutter/cupertino.dart';
 import'package:lottie/lottie.dart';
 import'package:flutter/material.dart';
+import 'package:truemoneyversion2/View/quick_transaction_limit.dart';
 import'package:truemoneyversion2/View/quick_transfer.dart';
 import'package:truemoneyversion2/View/loading_transfer_success.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -54,6 +55,18 @@ class _MakeTransferState extends State<MakeTransfer> {
         })
     );
   }
+  
+  bool confirmedamount(){
+    if(double.parse(amountupdatecontroller.text.trim().toString())< 0.1){
+      return false;
+    }else if(double.parse(amountupdatecontroller.text.trim().toString())>= 0.1){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+  
   List<dynamic> quicktransferuser=[];
   String quickdocument="";
   Future getquicktransferuser() async{
@@ -69,9 +82,10 @@ class _MakeTransferState extends State<MakeTransfer> {
               print("length "+quicktransferuser.length.toString());
               currentdocrec=document.reference.id;
             });
-          }
+            }
+    }
 
-        })
+        )
     );
   }
   Future updatequicktransferstatus() async{
@@ -130,15 +144,15 @@ class _MakeTransferState extends State<MakeTransfer> {
   Future updatetransactionlimit() async{
 
     if(currencyupdatecontroller=="USD"){
-      int totalrec=int.parse(amountupdatecontroller.text.trim())+int.parse(getrecieveramount[0]);
-      int totalsen=int.parse(getsenderamount[0])-int.parse(amountupdatecontroller.text.trim());
-      await FirebaseFirestore.instance.collection('customer').doc(currentdocrec).update({'enmoney':totalrec.toString()});
-      await FirebaseFirestore.instance.collection('customer').doc(currentdocsen).update({'enmoney':totalsen.toString()});
+      double totalrec=double.parse(amountupdatecontroller.text.trim())+double.parse(getrecieveramount[0]);
+      double totalsen=double.parse(getsenderamount[0])-double.parse(amountupdatecontroller.text.trim());
+      await FirebaseFirestore.instance.collection('customer').doc(currentdocrec).update({'enmoney':totalrec.toStringAsFixed(2)});
+      await FirebaseFirestore.instance.collection('customer').doc(currentdocsen).update({'enmoney':totalsen.toStringAsFixed(2)});
     }else if(currencyupdatecontroller=="KH"){
-      int totalrec=int.parse(amountupdatecontroller.text.trim())+int.parse(getrecieveramount[1]);
-      int totalsen=int.parse(getsenderamount[1])-int.parse(amountupdatecontroller.text.trim());
-      await FirebaseFirestore.instance.collection('customer').doc(currentdocrec).update({'khmoney':totalrec.toString()});
-      await FirebaseFirestore.instance.collection('customer').doc(currentdocsen).update({'enmoney':totalsen.toString()});
+      double totalrec=double.parse(amountupdatecontroller.text.trim())+double.parse(getrecieveramount[1]);
+      double totalsen=double.parse(getsenderamount[1])-double.parse(amountupdatecontroller.text.trim());
+      await FirebaseFirestore.instance.collection('customer').doc(currentdocrec).update({'khmoney':totalrec.toStringAsFixed(2)});
+      await FirebaseFirestore.instance.collection('customer').doc(currentdocsen).update({'enmoney':totalsen.toStringAsFixed(2)});
     }
 
   }
@@ -220,7 +234,8 @@ class _MakeTransferState extends State<MakeTransfer> {
                 SizedBox(
                   height: 16,
                 ),
-                TextField(
+                TextFormField(
+                  keyboardType: TextInputType.number,
                   controller: amountupdatecontroller,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -261,87 +276,127 @@ class _MakeTransferState extends State<MakeTransfer> {
                         desc: "Are you sure?",
                         btnCancelOnPress: (){},
                         btnOkOnPress: (){
-                        print('process start');
-                        print(getrecieveramount.length);
-                        if(getrecieveramount.length>=3){
+                          if(!confirmedamount()){
+                            AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.error,
+                                animType: AnimType.topSlide,
+                                showCloseIcon: true,
+                                title: "Transaction Error",
+                                desc: "Your send out amount must be above 0.10",
+                                btnOkOnPress: (){
+                                }
+                            ).show();
+                          }else if(currencyupdatecontroller==""){
+                            AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.error,
+                                animType: AnimType.topSlide,
+                                showCloseIcon: true,
+                                title: "Transaction Error",
+                                desc: "Please select currency type.",
+                                btnOkOnPress: (){
+                                }
+                            ).show();
+                          }else{
+                            print('process start');
+                            print(getrecieveramount.length);
+                            if(getrecieveramount.length>=3){
 
-                        getsenderid();
-                         print('get reciever amount work');
-    }
+                              getsenderid();
+                              print('get reciever amount work');
+                            }
 
-                        if(getsenderamount.length>=3){
-                        print('operation work');
-                        print(amountupdatecontroller.text.trim().toString());
-                        print(getsenderamount[0]);
-                        if(currencyupdatecontroller=='USD' && int.parse(amountupdatecontroller.text.trim().toString())>int.parse(getsenderamount[0])){
-                          AwesomeDialog(
-                        context: context,
-                        dialogType: DialogType.warning,
-                        animType: AnimType.topSlide,
-                        showCloseIcon: true,
-                        title: "Transacion Error",
-                       desc: "Your current amount is not enough.",
-                        btnOkOnPress: (){
-                        }
-                        ).show();
+                            if(getsenderamount.length>=3){
+                              print('operation work');
+                              print(amountupdatecontroller.text.trim().toString());
+                              print(getsenderamount[0]);
+                              if(currencyupdatecontroller=='USD' && double.parse(amountupdatecontroller.text.trim().toString())>double.parse(getsenderamount[0])){
+                                AwesomeDialog(
+                                    context: context,
+                                    dialogType: DialogType.warning,
+                                    animType: AnimType.topSlide,
+                                    showCloseIcon: true,
+                                    title: "Transacion Error",
+                                    desc: "Your current amount is not enough.",
+                                    btnOkOnPress: (){
+                                    }
+                                ).show();
 
-                        }else if(currencyupdatecontroller=='USD' && int.parse(amountupdatecontroller.text.trim())<=int.parse(getsenderamount[0])){
-                        if(int.parse(amountupdatecontroller.text.trim().toString())<int.parse(limitset[2])){
-                          print("limit amount:"+limitset[2]);
-                          print("send amount:"+ amountupdatecontroller.text.trim().toString());
-                          updatequicktransferstatus();
-                          createtransaction();
-                          createnotification();
-                        updatetransactionlimit();
-                        Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                         builder: (ctx) => const LoadingTransferSuccess()));
-                        }else{
-                        AwesomeDialog(
-                        context: context, dialogType: DialogType.warning,
-                        animType: AnimType.topSlide,
-                        showCloseIcon: true,
-                        title: "Transacion Error",
-                        desc: "Your amount that need to send is over limit.",
-                        btnOkOnPress: (){
-                        }
-                        ).show();
-                        }
+                              }else if(currencyupdatecontroller=='USD' && double.parse(amountupdatecontroller.text.trim())<=double.parse(getsenderamount[0])){
+                                if(limitset.length==0){
+                                  AwesomeDialog(
+                                      context: context,
+                                      dialogType: DialogType.warning,
+                                      animType: AnimType.topSlide,
+                                      showCloseIcon: true,
+                                      title: "Security recommendation",
+                                      desc: "Please set a transaction limit first before send the money out.",
+                                      btnOkOnPress: (){
+                                        Navigator.of(context).pushReplacement(
+                                            CupertinoPageRoute(builder: (ctx) => const QuickTransaction()));
+                                      }
+                                  ).show();
+                                }
+                                if(double.parse(amountupdatecontroller.text.trim().toString())<double.parse(limitset[2])){
+                                  print("limit amount:"+limitset.length.toString());
+                                  print("limit amount:"+limitset[0]);
+                                  print("send amount:"+ amountupdatecontroller.text.trim().toString());
+                                  updatequicktransferstatus();
+                                  createtransaction();
+                                  createnotification();
+                                  updatetransactionlimit();
+                                  Navigator.of(context).pushReplacement(CupertinoPageRoute(
+                                      builder: (ctx) => const LoadingTransferSuccess()));
+                                }else{
+                                  AwesomeDialog(
+                                      context: context, dialogType: DialogType.warning,
+                                      animType: AnimType.topSlide,
+                                      showCloseIcon: true,
+                                      title: "Transacion Error",
+                                      desc: "Your amount that need to send is over limit.",
+                                      btnOkOnPress: (){
+                                      }
+                                  ).show();
+                                }
 
-                        }
-                if(currencyupdatecontroller=='KH' && int.parse(amountupdatecontroller.text.trim())>int.parse(getsenderamount[1])){
-                AwesomeDialog(
-                context: context,
-                dialogType: DialogType.warning,
-                animType: AnimType.topSlide,
-                showCloseIcon: true,
-                title: "Transacion Error",
-                desc: "Your current amount is not enough.",
-                btnOkOnPress: (){
-                }
-                ).show();
-                }else if(currencyupdatecontroller=='KH' && int.parse(amountupdatecontroller.text.trim())<=int.parse(getsenderamount[1])){
-                if(int.parse(amountupdatecontroller.text.trim().toString())<int.parse(limitset[2])){
-                  updatequicktransferstatus();
-                  createtransaction();
-                  createnotification();
-                updatetransactionlimit();
-                Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                builder: (ctx) => const LoadingTransferSuccess()));
-                }else{
-                  AwesomeDialog(
-                      context: context,
-                      dialogType: DialogType.warning,
-                      animType: AnimType.topSlide,
-                      showCloseIcon: true,
-                      title: "Transacion Error",
-                      desc: "Your amount that need to send is over limit.",
-                      btnOkOnPress: (){
-                      }
-                  ).show();
-                }
-    }
+                              }
+                              if(currencyupdatecontroller=='KH' && double.parse(amountupdatecontroller.text.trim())>double.parse(getsenderamount[1])){
+                                AwesomeDialog(
+                                    context: context,
+                                    dialogType: DialogType.warning,
+                                    animType: AnimType.topSlide,
+                                    showCloseIcon: true,
+                                    title: "Transacion Error",
+                                    desc: "Your current amount is not enough.",
+                                    btnOkOnPress: (){
+                                    }
+                                ).show();
+                              }else if(currencyupdatecontroller=='KH' && double.parse(amountupdatecontroller.text.trim())<=double.parse(getsenderamount[1])){
+                                if(double.parse(amountupdatecontroller.text.trim().toString())<double.parse(limitset[2])){
+                                  updatequicktransferstatus();
+                                  createtransaction();
+                                  createnotification();
+                                  updatetransactionlimit();
+                                  Navigator.of(context).pushReplacement(CupertinoPageRoute(
+                                      builder: (ctx) => const LoadingTransferSuccess()));
+                                }else{
+                                  AwesomeDialog(
+                                      context: context,
+                                      dialogType: DialogType.warning,
+                                      animType: AnimType.topSlide,
+                                      showCloseIcon: true,
+                                      title: "Transacion Error",
+                                      desc: "Your amount that need to send is over limit.",
+                                      btnOkOnPress: (){
+                                      }
+                                  ).show();
+                                }
+                              }
 
-    }
+                            }
+                          }
+
 
 
     },
