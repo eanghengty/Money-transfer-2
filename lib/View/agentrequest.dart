@@ -57,7 +57,7 @@ class _agentrequestState extends State<agentrequest> {
 
 
   @override
-  Widget list_request({required agentid, required currency, required customerid, required amount, required status, required widthraw,required date}){
+  Widget list_request({required agentid, required currency, required customerid, required amount, required status, required widthraw,required date, required int num}){
     return Container(
       decoration: BoxDecoration(
           color: Colors.blue[800],
@@ -139,7 +139,7 @@ class _agentrequestState extends State<agentrequest> {
                                           color: Colors.white
                                       ),),
                                     SizedBox(height: 20,),
-                                    Text('Transfer amount: '+ double.parse(amount).toStringAsFixed(2),
+                                    Text('Transfer amount: '+ (double.parse(widthraw)>0?double.parse(amount).toStringAsFixed(2):double.parse(widthraw).toStringAsFixed(2)),
                                       style: TextStyle(
                                           fontWeight: FontWeight.w400,
                                           fontSize: 14,
@@ -160,7 +160,7 @@ class _agentrequestState extends State<agentrequest> {
                                           color: Colors.white
                                       ),),
                                     SizedBox(height: 16,),
-                                    Text('Currency: ' + currency.toString().toUpperCase(),
+                                    Text('Currency: ' + currency[num].toUpperCase(),
                                       style: TextStyle(
                                           fontWeight: FontWeight.w400,
                                           fontSize: 14,
@@ -230,6 +230,7 @@ class _agentrequestState extends State<agentrequest> {
                 currency: listcurrencytype,
                 status:listtransactionstatus[index],
                 customerid: listcustomeruid[index],
+                num:index
               );
             })
     );

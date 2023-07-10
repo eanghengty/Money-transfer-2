@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import'package:flutter/material.dart';
 import'package:flutter/cupertino.dart';
 import'package:lottie/lottie.dart';
@@ -5,6 +6,7 @@ import 'package:truemoneyversion2/View/adminhomescreen.dart';
 import 'package:truemoneyversion2/View/agent_home_screen.dart';
 import 'package:truemoneyversion2/View/agent_transaction_request_detail.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:truemoneyversion2/View/approvingadminprocess.dart';
 class adminrequest extends StatefulWidget {
   const adminrequest({Key? key}) : super(key: key);
 
@@ -21,6 +23,8 @@ class _adminrequestState extends State<adminrequest> {
   List<String> listtransactionstatus=[];
   List<String> listwithdrawamount=[];
   List<String> listdate=[];
+  List<String> listtype=[];
+  List<String> listagentdoc=[];
 
   Future getDocId() async {
     await FirebaseFirestore.instance.collection('agent').get().then(
@@ -34,21 +38,110 @@ class _adminrequestState extends State<adminrequest> {
                 listtransactionstatus.add(document['transactionstatus']);
                 listwithdrawamount.add(document['withdrawamount']);
                 listdate.add(document['createddate'][0]);
+                listtype.add(document['type']);
+                listagentdoc.add(document.reference.id);
 
               }
+
 
                 // print(accountid.length);
                 // listdocument.add(document.reference.id);
               );
             })
     );
+    getDocId2();
+    print(listcustomeruid.toString());
+    print(listtransactionstatus.length);
   }
 
+  List<String> listcustomerid=[];
+  List<String> listcustomerenmoney=[];
+  List<String> listcustomerkhmoney=[];
+  List<String> listcustomerdoc=[];
+  List<String> listcustomername=[];
+  // List<String> listdepositamount=[];
+  // List<String> listtransactionstatus=[];
+  // List<String> listwithdrawamount=[];
+  // List<String> listdate=[];
+
+  List<String> test=[];
+  Future getDocId2() async {
+      for(int i=0; i<listcustomeruid.length;i++) {
+        await FirebaseFirestore.instance.collection('customer').where(
+            'accountid', isEqualTo: listcustomeruid[i]).get().then(
+                (snapshot) =>
+                snapshot.docs.forEach((document) {
+                  setState(() {
+                    listcustomerid.add(document['accountid']);
+                    listcustomerenmoney.add(document['enmoney']);
+                    listcustomerkhmoney.add(document['khmoney']);
+                    listcustomername.add(document['fullname']);
+                    listcustomerdoc.add(document.reference.id);
+                  });
+                }
+                ));
+      }
+          print("customer: " + listcustomerid.toString());
+      print("customer: " + listcustomerdoc.toString());
+
+  }
+  Future createtransaction(int num) async{
+    await FirebaseFirestore.instance.collection('transactionlog').add({
+      'tranamount':listdepositamount[num],
+      'trandate':DateTime.now().toString(),
+      // 'tranreceiver':senttoaccountid.text.trim(),
+      'tranreceiver':listcustomerid[num],
+      'tranrecname':listtype[num] == 'deposit'? listcustomername[num]:listagentid[num],
+      'uidowner':"",
+      'uiddrec':listcustomername[num],
+      'currency':listcurrencytype[num],
+      'transendername':listagentid[num],
+      'transenderid':listtype[num] == 'deposit'? listagentid[num]:listcustomername[num],
+    });
+  }
+
+  Future calculaterequest({required int num}) async{
+    if(listcurrencytype[num].toUpperCase()=="USD"){
+      if(listtype[num]=="deposit"){
+        double totalrec=double.parse(listdepositamount[num])+double.parse(listcustomerenmoney[num]);
+        await FirebaseFirestore.instance.collection('customer').doc(listcustomerdoc[num]).update({'enmoney':totalrec.toStringAsFixed(2)});
+        print(totalrec);
+
+      }else if(listtype[num]=="withdraw"){
+        double totalsen=double.parse(listcustomerenmoney[num])-double.parse(listwithdrawamount[num]);
+        await FirebaseFirestore.instance.collection('customer').doc(listcustomerdoc[num]).update({'enmoney':totalsen.toStringAsFixed(2)});
+        print(totalsen);
+      }
+    }else if(listcurrencytype[num].toUpperCase()=="KH"){
+      if(listtype[num]=="deposit"){
+        double totalrec=double.parse(listdepositamount[num])+double.parse(listcustomerkhmoney[num]);
+        await FirebaseFirestore.instance.collection('customer').doc(listcustomerdoc[num]).update({'khmoney':totalrec.toStringAsFixed(2)});
+        print(totalrec);
+      }else if(listtype[num]=="withdraw"){
+        double totalsen=double.parse(listcustomerkhmoney[num])-double.parse(listwithdrawamount[num]);
+        await FirebaseFirestore.instance.collection('customer').doc(listcustomerdoc[num]).update({'khmoney':totalsen.toStringAsFixed(2)});
+        print(totalsen);
+      }
+
+
+    }
+  }
+
+  Future chagestatusapproved(int num) async{
+    await FirebaseFirestore.instance.collection('agent').doc(listagentdoc[num]).update({'transactionstatus':'Approved'});
+    print(listtransactionstatus[num]);
+  }
+  Future chagestatusrejected(int num) async{
+    await FirebaseFirestore.instance.collection('agent').doc(listagentdoc[num]).update({'transactionstatus':'Rejected'});
+    print(listtransactionstatus[num]);
+  }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
     getDocId();
+
   }
 
 
@@ -56,7 +149,7 @@ class _adminrequestState extends State<adminrequest> {
 
 
   @override
-  Widget list_request({required agentid, required currency, required customerid, required amount, required status, required widthraw,required date}){
+  Widget list_request({required agentid, required currency, required customerid, required amount, required status, required widthraw,required date, required int num}){
     return Container(
       decoration: BoxDecoration(
           color: Colors.blue[800],
@@ -133,7 +226,7 @@ class _adminrequestState extends State<adminrequest> {
                                             color: Colors.white
                                         ),),
                                       SizedBox(height: 20,),
-                                      Text('Transfer amount: '+ double.parse(amount).toStringAsFixed(2),
+                                      Text('Transfer amount: '+ (double.parse(widthraw)>0?double.parse(amount).toStringAsFixed(2):double.parse(widthraw).toStringAsFixed(2)),
                                         style: TextStyle(
                                             fontWeight: FontWeight.w400,
                                             fontSize: 14,
@@ -154,7 +247,7 @@ class _adminrequestState extends State<adminrequest> {
                                             color: Colors.white
                                         ),),
                                       SizedBox(height: 16,),
-                                      Text('Currency: ' + currency.toString().toUpperCase(),
+                                      Text('Currency: ' + currency[num].toUpperCase(),
                                         style: TextStyle(
                                             fontWeight: FontWeight.w400,
                                             fontSize: 14,
@@ -164,7 +257,7 @@ class _adminrequestState extends State<adminrequest> {
                                       Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            ElevatedButton(
+                                            listtransactionstatus[num]=='pending'?ElevatedButton(
                                               child: Text("Accept", style:
                                               TextStyle(color: Colors.white,)),
                                               style: ElevatedButton.styleFrom(
@@ -173,10 +266,18 @@ class _adminrequestState extends State<adminrequest> {
 
                                               ),
                                               onPressed: () {
+                                                setState(() {
+                                                  calculaterequest(num: num);
+                                                  chagestatusapproved(num);
+                                                  createtransaction(num);
+                                                  Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const approvingprocess()));
+                                                });
 
-                                              },),
+
+
+                                              },):Text(''),
                                             SizedBox(width: 20,),
-                                            ElevatedButton(
+                                            listtransactionstatus[num]=='pending'?ElevatedButton(
                                               child: Text("Deny", style:
                                               TextStyle(color: Colors.white,)),
                                               style: ElevatedButton.styleFrom(
@@ -185,9 +286,12 @@ class _adminrequestState extends State<adminrequest> {
 
                                               ),
                                               onPressed: () {
-
+                                                  setState(() {
+                                                    chagestatusrejected(num);
+                                                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const approvingprocess()));
+                                                  });
                                               },
-                                            ),
+                                            ):Text(''),
                                           ])
                                     ])
                             ),]),
@@ -251,6 +355,7 @@ class _adminrequestState extends State<adminrequest> {
                 currency: listcurrencytype,
                 status:listtransactionstatus[index],
                 customerid: listcustomeruid[index],
+                num:index
               );
             })
     );

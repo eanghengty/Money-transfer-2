@@ -47,6 +47,7 @@ class _AgentHomeScreenState extends State<AgentHomeScreen> {
   }
 
   List<String> name=[];
+  List<String> customeruid=[];
   Future getDocId() async {
     await FirebaseFirestore.instance.collection('customer').where(
         'uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid).get().then(
@@ -54,6 +55,8 @@ class _AgentHomeScreenState extends State<AgentHomeScreen> {
             snapshot.docs.forEach((document) {
               setState(() {
                 name.add(document['fullname']);
+                customeruid.add(document['uid']);
+
               }
 
                 // print(accountid.length);
@@ -67,6 +70,8 @@ class _AgentHomeScreenState extends State<AgentHomeScreen> {
   Future addtransactionrequest() async{
     await FirebaseFirestore.instance.collection('agent').add({
       'agentuid':name[0],
+      'cuid': customeruid[0],
+      'auid':FirebaseAuth.instance.currentUser!.uid,
       'customeruid':customeruidcontroller.text.trim(),
       'depositamount':depositamountcontroller.text.trim(),
       'currencytype':currencytypecontroller.text.trim(),
@@ -74,6 +79,7 @@ class _AgentHomeScreenState extends State<AgentHomeScreen> {
       'transactionstatus':'pending',
       'createddate':DateTime.now().toString().split('.'),
       'withdrawamount':withdrawamountcontroller.text.trim(),
+      'type':typecontroller.text.trim()
 
 
 
@@ -114,6 +120,7 @@ class _AgentHomeScreenState extends State<AgentHomeScreen> {
   final customeruidcontroller=TextEditingController();
   final depositamountcontroller=TextEditingController();
   final withdrawamountcontroller=TextEditingController();
+  final typecontroller=TextEditingController();
 
   Future openeditbox(){
     return showDialog(context: context, builder: (context)=>AlertDialog(
@@ -157,6 +164,16 @@ class _AgentHomeScreenState extends State<AgentHomeScreen> {
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'please input the withdraw amount, if no put 0',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            TextField(
+              controller: typecontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'type: desposit/withdraw',
               ),
             ),
             SizedBox(

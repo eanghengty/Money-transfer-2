@@ -1,3 +1,4 @@
+
 import'package:flutter/material.dart';
 import'package:flutter/cupertino.dart';
 import'package:lottie/lottie.dart';
@@ -5,6 +6,7 @@ import 'package:truemoneyversion2/Drawbar_view/exchange_rate.dart';
 import 'package:truemoneyversion2/Drawbar_view/location.dart';
 import 'package:truemoneyversion2/Drawbar_view/setting.dart';
 import 'package:truemoneyversion2/Drawbar_view/term_and_condition.dart';
+import 'package:truemoneyversion2/View/admin_post.dart';
 import 'package:truemoneyversion2/View/admin_transaction_log.dart';
 import 'package:truemoneyversion2/View/admin_user_created_screen.dart';
 import 'package:truemoneyversion2/View/agent_post.dart';
@@ -17,6 +19,7 @@ import 'package:truemoneyversion2/View/sign_in_screen_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 class adminhomescreen extends StatefulWidget {
   const adminhomescreen({Key? key}) : super(key: key);
@@ -25,7 +28,291 @@ class adminhomescreen extends StatefulWidget {
   State<adminhomescreen> createState() => _adminhomescreenState();
 }
 
+// Future createnewuser(){
+//   return showDialog(context: context, builder: (context)=>AlertDialog(
+//     title:Text('Create new user'),
+//     content:SingleChildScrollView(
+//       child: Column(
+//         children: [
+//           TextField(
+//             autofocus: true,
+//             controller: namecontroller,
+//             decoration: InputDecoration(
+//               border: OutlineInputBorder(),
+//               labelText: 'create user fullname',
+//             ),
+//           ),
+//           SizedBox(
+//             height: 16,
+//           ),
+//           TextField(
+//             controller: phonenumbercontroller,
+//             decoration: InputDecoration(
+//               border: OutlineInputBorder(),
+//               labelText: 'create user phone number',
+//             ),
+//           ),
+//           SizedBox(
+//             height: 16,
+//           ),
+//           TextField(
+//             controller: jobtitlecontroller,
+//             decoration: InputDecoration(
+//               border: OutlineInputBorder(),
+//               labelText: 'create user job title',
+//             ),
+//           ),
+//           SizedBox(
+//             height: 16,
+//           ),
+//           TextField(
+//             controller: uidupdatecontroller,
+//             decoration: InputDecoration(
+//               border: OutlineInputBorder(),
+//               labelText: 'update uid',
+//             ),
+//           ),
+//           SizedBox(
+//             height: 16,
+//           ),
+//           TextField(
+//             controller: dobupdatecontroller,
+//             decoration: InputDecoration(
+//               border: OutlineInputBorder(),
+//               labelText: 'update date of birth',
+//             ),
+//           ),
+//           SizedBox(
+//             height: 16,
+//           ),
+//         ],
+//       ),
+//     ),
+//     actions: [
+//       TextButton(onPressed: (){
+//         AwesomeDialog(
+//             context: context,
+//             dialogType: DialogType.warning,
+//             animType: AnimType.topSlide,
+//             showCloseIcon: true,
+//             title: "Update information",
+//             desc: "Are you sure to change this?",
+//             btnOkOnPress: () {
+//               setState(() {
+//                 if(nameupdatecontroller.text.trim().toString()!=""){
+//                   updatename(num);
+//                 }
+//                 if(dobupdatecontroller.text.trim().toString()!=""){
+//                   updatedob(num);
+//                 }
+//                 if(uidupdatecontroller.text.trim().toString()!=""){
+//                   uidupdate(num);
+//                 }
+//                 if(jobtitleupdatecontroller.text.trim().toString()!=""){
+//                   updatejob(num);
+//
+//                 }
+//                 if(phonenumberupdatecontroller.text.trim().toString()!=""){
+//                   updatephonenumber(num);
+//
+//                 }
+//               });
+//             },
+//             btnCancelOnPress: () {
+//
+//             }
+//         ).show();
+//       }, child: Text('Change'))
+//     ],
+//   ),
+//
+//   );
+// }
+
+
+
+
+
 class _adminhomescreenState extends State<adminhomescreen> {
+
+  final descriptioncontroller=TextEditingController();
+  final discountcontroller=TextEditingController();
+  final enddatecontroller=TextEditingController();
+  final startdatecontroller=TextEditingController();
+  final typecontroller=TextEditingController();
+  final servicesntroller=TextEditingController();
+
+  Future createservices() async{
+    await FirebaseFirestore.instance.collection('quickservices').add({
+      'description':descriptioncontroller.text.trim(),
+      'discount':discountcontroller.text.trim(),
+      // 'tranreceiver':senttoaccountid.text.trim(),
+      'enddate':enddatecontroller.text.trim(),
+      'services':servicesntroller.text.trim(),
+      'startdate':startdatecontroller.text.trim(),
+      'type':typecontroller.text.trim(),
+
+    });
+  }
+  final descriptionpaymentcontroller=TextEditingController();
+  final namepaymentcontroller=TextEditingController();
+
+  Future createpayment() async{
+    await FirebaseFirestore.instance.collection('quickpayment').add({
+      'description':descriptionpaymentcontroller.text.trim(),
+      'name':namepaymentcontroller.text.trim(),
+    });
+  }
+
+  Future createquickservice(){
+    return showDialog(context:context, builder: (context)=>AlertDialog(
+      title:Text('Create new service'),
+      content:SingleChildScrollView(
+        child: Column(
+          children: [
+            TextField(
+              autofocus: true,
+              controller: descriptioncontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'create service description',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            TextField(
+              controller: discountcontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'create discount percentage',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            TextField(
+              controller: enddatecontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'create end date ',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            TextField(
+              controller: startdatecontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'create start date',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            TextField(
+              controller: typecontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'create type',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            TextField(
+              controller: servicesntroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'create services name',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: (){
+          AwesomeDialog(
+              context: context,
+              dialogType: DialogType.warning,
+              animType: AnimType.topSlide,
+              showCloseIcon: true,
+              title: "Create new services",
+              desc: "Are you sure to create this?",
+              btnOkOnPress: () {
+                  setState(() {
+                    createservices();
+                  });
+              },
+              btnCancelOnPress: () {
+
+              }
+          ).show();
+        }, child: Text('Create'))
+      ],
+    ),
+
+    );
+  }
+  Future createquickpayment(){
+    return showDialog(context:context, builder: (context)=>AlertDialog(
+      title:Text('Create new payment'),
+      content:SingleChildScrollView(
+        child: Column(
+          children: [
+            TextField(
+              autofocus: true,
+              controller: descriptionpaymentcontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'create payment description',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            TextField(
+              controller: namepaymentcontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'create payment name',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: (){
+          AwesomeDialog(
+              context: context,
+              dialogType: DialogType.warning,
+              animType: AnimType.topSlide,
+              showCloseIcon: true,
+              title: "Create new payment",
+              desc: "Are you sure to create this?",
+              btnOkOnPress: () {
+                setState(() {
+                  createpayment();
+                });
+              },
+              btnCancelOnPress: () {
+
+              }
+          ).show();
+        }, child: Text('Create'))
+      ],
+    ),
+
+    );
+  }
 
   List<String> admininfo=[];
   List<String> adminaccountid=[];
@@ -65,7 +352,7 @@ class _adminhomescreenState extends State<adminhomescreen> {
     super.dispose();
   }
   List menu = [ExchangeRate(), TermAndCondition(), Location(),Setting(),SignInScreen()];
-  List feature_menu=[AgentPost()];
+  List feature_menu=[adminpost()];
   Widget feature_row(
       {required int color_num,
         required String title_text,
@@ -74,8 +361,15 @@ class _adminhomescreenState extends State<adminhomescreen> {
         required int ID}) {
     return InkWell(
       onTap: (){
-        Navigator.of(context).pushReplacement(
-            CupertinoPageRoute(builder: (ctx) => feature_menu[ID]));
+        if(ID==3){
+          createquickservice();
+        }else if(ID==2){
+          createquickpayment();
+        }else{
+          Navigator.of(context).pushReplacement(
+              CupertinoPageRoute(builder: (ctx) => feature_menu[ID]));
+        }
+
       },
       child: Container(
         width: double.infinity,
@@ -395,7 +689,7 @@ class _adminhomescreenState extends State<adminhomescreen> {
                       description_text: 'This feature offer you the possibilty of '
                           'created different payment services for user',
                       animation:
-                      'https://assets6.lottiefiles.com/packages/lf20_ad1buz0z.json',
+                      'https://assets2.lottiefiles.com/packages/lf20_3tryizhw.json',
                       ID:2),
                   feature_row(
                       color_num: 800,
@@ -403,8 +697,8 @@ class _adminhomescreenState extends State<adminhomescreen> {
                       description_text: 'This feature offer you the possibilty of '
                           'created different promotions for user',
                       animation:
-                      'https://assets6.lottiefiles.com/packages/lf20_ad1buz0z.json',
-                      ID:2),
+                      'https://assets1.lottiefiles.com/packages/lf20_pms7gseb.json',
+                      ID:3),
 
                 ],
               ),

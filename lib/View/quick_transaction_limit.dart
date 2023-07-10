@@ -24,7 +24,8 @@ class _QuickTransactionState extends State<QuickTransaction> {
           setState(() {
             currentdoc=document.reference.id;
             docIDs.add(int.parse(document['transferdailylimit']));
-            docIDs.add(int.parse(document['withdrawamountlimit']));
+            docIDs.add(double.parse(document['enmoney']));
+            docIDs.add(double.parse(document['khmoney']));
             docIDs.add(document['setdate']);
             print(docIDs.length);
           });
@@ -33,9 +34,11 @@ class _QuickTransactionState extends State<QuickTransaction> {
   }
   final updatetransferdailylimitcontroller=TextEditingController();
   final updatewithdrawamountlimitcontroller=TextEditingController();
+  final updatekhlimitcontroller=TextEditingController();
   String updatedatelimitcontroller="";
   Future updatetransactionlimit() async{
-   await FirebaseFirestore.instance.collection('quicklimit').doc(currentdoc).update({'transferdailylimit':updatetransferdailylimitcontroller.text.trim(), 'withdrawamountlimit':updatewithdrawamountlimitcontroller.text.trim(),'setdate':updatedatelimitcontroller});
+   await FirebaseFirestore.instance.collection('quicklimit').doc(currentdoc).update({'transferdailylimit':updatetransferdailylimitcontroller.text.trim(), 'enmoney':updatewithdrawamountlimitcontroller.text.trim(),'setdate':updatedatelimitcontroller
+   ,'khmoney':updatekhlimitcontroller.text.trim()});
   }
   void initState(){
     getDocId();
@@ -47,7 +50,7 @@ class _QuickTransactionState extends State<QuickTransaction> {
   final currentuser=FirebaseAuth.instance;
   DateTime setcastdatecontroller= DateTime.now();
   String setdatecontroller="";
-
+  final khlimitcontroller=TextEditingController();
   void dipose(){
     transferdailylimitcontroller.dispose();
     withdrawamountlimitcontroller.dispose();
@@ -56,7 +59,8 @@ class _QuickTransactionState extends State<QuickTransaction> {
   Future addquicktransactionlimit() async {
     await FirebaseFirestore.instance.collection('quicklimit').add({
       'transferdailylimit':transferdailylimitcontroller.text.trim(),
-      'withdrawamountlimit':withdrawamountlimitcontroller.text.trim(),
+      'enmoney':withdrawamountlimitcontroller.text.trim(),
+      'khmoney':khlimitcontroller.text.trim(),
       'setdate':setdatecontroller,
       'uid':currentuser.currentUser!.uid,
 
@@ -86,7 +90,7 @@ class _QuickTransactionState extends State<QuickTransaction> {
           ),
         ),
         body:SingleChildScrollView(
-          child: docIDs.length==4?Container(
+          child: docIDs.length==5?Container(
             padding: EdgeInsets.all(16),
             width: double.infinity,
             child: Column(
@@ -120,7 +124,17 @@ class _QuickTransactionState extends State<QuickTransaction> {
                   controller: updatewithdrawamountlimitcontroller,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'Current withdraw amount set to '+ docIDs[2].toString(),
+                    labelText: 'Current USD amount set to '+ docIDs[2].toString(),
+                  ),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                TextField(
+                  controller: updatekhlimitcontroller,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Current KHR amount set to '+ docIDs[3].toString(),
                   ),
                 ),
                 SizedBox(
@@ -128,10 +142,9 @@ class _QuickTransactionState extends State<QuickTransaction> {
                 ),
                 TextField(
                   enabled: false,
-                  controller: updatewithdrawamountlimitcontroller,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'Current date set to '+ docIDs[3].toString(),
+                    labelText: 'Current date set to '+ docIDs[4].toString(),
                   ),
                 ),
                 SizedBox(
@@ -230,11 +243,22 @@ class _QuickTransactionState extends State<QuickTransaction> {
                 SizedBox(
                   height: 16,
                 ),
+
                 TextField(
                   controller: withdrawamountlimitcontroller,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'Withdraw amount per transfer',
+                    labelText: 'limit USD amount',
+                  ),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                TextField(
+                  controller: khlimitcontroller,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'limit KHR amount',
                   ),
                 ),
                 SizedBox(

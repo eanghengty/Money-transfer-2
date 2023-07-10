@@ -6,9 +6,11 @@ import 'package:truemoneyversion2/View/agent_verification.dart';
 import 'package:truemoneyversion2/View/confirm_lock.dart';
 import 'package:truemoneyversion2/View/loading_to_home_screen.dart';
 import 'package:truemoneyversion2/View/register_screen_view.dart';
+import 'package:truemoneyversion2/View/sigintohome.dart';
 import'package:truemoneyversion2/View/verify_code_screen.dart';
 import'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'signupscreen.dart';
 class SignInScreen extends StatefulWidget {
@@ -35,13 +37,31 @@ class _SignInScreenState extends State<SignInScreen> {
     passwordcontroller.dispose();
     dispose();
   }
+  void showt(){
+    Fluttertoast.showToast(msg: 'Authenticating, please wait',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.TOP,
+        timeInSecForIosWeb: 4,
+        backgroundColor: Colors.grey,
+        fontSize: 15);
+  }
+  bool enabled=true;
   Future signin() async{
+    setState(() {
+      enabled=false;
+      showt();
+    });
+
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailcontroller.text.trim(),
           password: passwordcontroller.text.trim());
-      Navigator.of(context).pushReplacement(
-          CupertinoPageRoute(builder: (ctx) => const ConfirmLock()));
+
+      Future.delayed(Duration(seconds: 7)).then((value) =>
+          Navigator.of(context).pushReplacement(
+              CupertinoPageRoute(builder: (ctx) => const signintohome())));
+
+
     } on FirebaseAuthException catch(error) {
       AwesomeDialog(
           context: context,
@@ -50,10 +70,21 @@ class _SignInScreenState extends State<SignInScreen> {
           showCloseIcon: true,
           title: "Wrong email/password",
           desc: "please try again!",
-          btnCancelOnPress: () {},
-          btnOkOnPress: () {}
+          btnCancelOnPress: () {
+            setState(() {
+              enabled=true;
+
+            });
+          },
+          btnOkOnPress: () {
+            setState(() {
+              enabled=true;
+
+            });
+          }
       ).show();
     }
+
 
   }
   void initState(){
@@ -90,7 +121,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       SizedBox(height: 16),
 
                       TextFormField(
-
+                        enabled: enabled,
                         keyboardType: TextInputType.emailAddress,
                         controller: emailcontroller,
                         decoration: InputDecoration(
@@ -114,7 +145,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                       SizedBox(height: 16,),
                       TextFormField(
-
+                        enabled: enabled,
                         validator: (value){
                           bool passwordvalid= RegExp(r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$").hasMatch(value!);
                           if(value.isEmpty){
@@ -144,7 +175,8 @@ class _SignInScreenState extends State<SignInScreen> {
                       //         child: Text("Done", style: TextStyle(color: Colors.white,)),
                       //       )
                       //   ),),
-                      AnimatedButton(
+                      enabled==true? AnimatedButton(
+
                         text:'Sign in',
                         color: Colors.blue,
                         pressEvent: (){
@@ -161,7 +193,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               }
                           ).show();
                         },
-                      ),
+                      ): Text(''),
                       // ElevatedButton(
                       //   child: Text("Done", style:
                       //   TextStyle(color: Colors.white,)),
@@ -189,7 +221,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       //     Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const signup()) );
                       //   },
                       // ),
-                      AnimatedButton(
+                      enabled==true?AnimatedButton(
                         text:'Sign up',
                         color: Colors.orange,
                         pressEvent: (){
@@ -200,29 +232,14 @@ class _SignInScreenState extends State<SignInScreen> {
                               showCloseIcon: true,
                               title: "Sign up",
                               desc: "Are you new to our MTA?",
-                              btnCancelOnPress: (){},
                               btnOkOnPress: (){
                                 Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const signup()) );
                               }
                           ).show();
                         },
-                      ),
+                      ):Text(''),
                       SizedBox(height: 16,),
-                      Text('Tap on this "Agent" button to sigin as agent account.'),
-                      SizedBox(height: 16,),
-                      ElevatedButton(
-                        child: Text("Agent", style:
-                        TextStyle(color: Colors.white,)),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.lightBlue,
-                          elevation: 0,
 
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const AgentVerification() ));
-                        },
-                      ),
-                      SizedBox(height: 16,),
 
                     ],
                   )),

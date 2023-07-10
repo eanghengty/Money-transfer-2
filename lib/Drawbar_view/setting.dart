@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import'package:flutter/cupertino.dart';
+import 'package:truemoneyversion2/View/changepassword.dart';
 import 'package:truemoneyversion2/View/first_lock.dart';
 import 'package:truemoneyversion2/View/home_screen_view.dart';
 import 'package:truemoneyversion2/View/view_detail_profile.dart';
@@ -11,7 +12,7 @@ class Setting extends StatefulWidget {
 }
 
 class _SettingState extends State<Setting> {
-  List menu_item=[FirstLock(),ViewDetail()];
+  List menu_item=[changepassword(),ViewDetail()];
   Widget menu({required String text, required Icon icon_data, required int id}){
     return InkWell(
       onTap: (){

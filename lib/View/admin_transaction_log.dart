@@ -45,14 +45,17 @@ class _AdminTransactionLogState extends State<admintransactionlog> {
             (snapshot)=>snapshot.docs.forEach((document) {
           setState(() {
             loglistdate.add(document['trandate']);
-            loglistrec.add(document['tranreceiver']);
+            loglistrec.add(document['tranrecname']);
+            loglistsend.add(document['transendername']);
             if(document['currency']=='USD' ){
               loglistamount.add(document['tranamount' ]+' USD');
-            }else if(document['currency']=='KHR') {
-              loglistamount.add("+ " + document['tranamount' ] + ' KHR');
+            }
+            if(document['currency']=='KH') {
+              loglistamount.add(document['tranamount' ] + ' KHR');
+
 
             }
-            print(loglistdate[0]);
+            print(loglistamount.toString());
             // print(accountid.length);
             // listdocument.add(document.reference.id);
           });
@@ -66,7 +69,7 @@ class _AdminTransactionLogState extends State<admintransactionlog> {
 
     super.initState();
   }
-  Widget log_show({required String date, required String log,required String name}){
+  Widget log_show({required String date, required String log,required String name, required String sendername, required String recievername}){
     return Container(
 
       child: Column(
@@ -82,19 +85,19 @@ class _AdminTransactionLogState extends State<admintransactionlog> {
           Column(
             children: [
               Container(
-
+                  height: 30,
                   padding: EdgeInsets.all(5),
                   child:Row(
                     children: [
                       Expanded(child: Row(
                         children: [
                           Icon(Icons.currency_exchange),
+
                           SizedBox(width: 10,),
-                          Text(name),
-                          SizedBox(width: 10,),
+                          Text(sendername + ' transferred to ' + recievername, style: TextStyle(fontSize: 12),)
                         ],
                       )),
-                      Expanded(child: Text(log,
+                      Container(child: Text(log,
                         style:TextStyle(
                           // color: log >= 0? Colors.green:Colors.red,
                           color: Colors.green
@@ -176,7 +179,7 @@ class _AdminTransactionLogState extends State<admintransactionlog> {
         )): ListView.builder(
             itemCount: loglistamount.length,
             itemBuilder: (context,index){
-              return log_show(date:loglistdate[index],log:loglistamount[index],name:loglistrec[index]);
+              return log_show(date:loglistdate[index],log:loglistamount[index],name:loglistrec[index], recievername: loglistrec[index], sendername: loglistsend[index]);
             })
     );
   }

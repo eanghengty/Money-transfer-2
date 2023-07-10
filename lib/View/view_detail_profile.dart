@@ -25,6 +25,8 @@ class _ViewDetailState extends State<ViewDetail> {
                 getaccountinfo.add(document['phonenumber']);
                 getaccountinfo.add(document['jobselection']);
                 getaccountinfo.add(document['dateofbirth']);
+                getaccountinfo.add(document['province']);
+                getaccountinfo.add(document['avgdeposit']);
                 print(getaccountinfo[0]);
                 print(getaccountinfo[1]);
                 print(getaccountinfo[2]);
@@ -94,7 +96,7 @@ class _ViewDetailState extends State<ViewDetail> {
           },
         ),
       ),
-      body: getaccountinfo.length==4 ?SingleChildScrollView(
+      body: getaccountinfo.length==6?SingleChildScrollView(
         child: Container(
           width: double.infinity,
 
@@ -146,13 +148,13 @@ class _ViewDetailState extends State<ViewDetail> {
                       description: getaccountinfo[3]),
                   list_of_detail(title:'Province',
                       icon_data:Icon(Icons.place_sharp,size: 35,),
-                      description: 'Battambang'),
+                      description: getaccountinfo[4]),
                   list_of_detail(title:'Career type',
                       icon_data:Icon(Icons.work,size: 35,),
                       description: getaccountinfo[2]),
                   list_of_detail(title:'Deposit Range',
                       icon_data:Icon(Icons.monetization_on,size: 35,),
-                      description: '> 300\$'),
+                      description: getaccountinfo[5]+' \$'),
                 ],
               )
             ],

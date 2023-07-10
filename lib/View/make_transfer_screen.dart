@@ -49,7 +49,8 @@ class _MakeTransferState extends State<MakeTransfer> {
           setState(() {
             limitset.add(document['setdate']);
             limitset.add(document['transferdailylimit']);
-            limitset.add(document['withdrawamountlimit']);
+            limitset.add(document['enmoney']);
+            limitset.add(document['khmoney']);
             currentdocrec=document.reference.id;
           });
         })
@@ -95,7 +96,7 @@ class _MakeTransferState extends State<MakeTransfer> {
   Future createtransaction() async{
     await FirebaseFirestore.instance.collection('transactionlog').add({
       'tranamount':amountupdatecontroller.text.trim(),
-      'trandate':DateTime.now().toString(),
+      'trandate':DateTime.now().toString().split(" "),
       // 'tranreceiver':senttoaccountid.text.trim(),
       'tranreceiver':quicktransferuser[0],
       'tranrecname':getrecieveramount[2],
@@ -154,7 +155,7 @@ class _MakeTransferState extends State<MakeTransfer> {
       double totalrec=double.parse(amountupdatecontroller.text.trim())+double.parse(getrecieveramount[1]);
       double totalsen=double.parse(getsenderamount[1])-double.parse(amountupdatecontroller.text.trim());
       await FirebaseFirestore.instance.collection('customer').doc(currentdocrec).update({'khmoney':totalrec.toStringAsFixed(2)});
-      await FirebaseFirestore.instance.collection('customer').doc(currentdocsen).update({'enmoney':totalsen.toStringAsFixed(2)});
+      await FirebaseFirestore.instance.collection('customer').doc(currentdocsen).update({'khmoney':totalsen.toStringAsFixed(2)});
     }
 
   }
@@ -375,7 +376,7 @@ class _MakeTransferState extends State<MakeTransfer> {
                                     }
                                 ).show();
                               }else if(currencyupdatecontroller=='KH' && double.parse(amountupdatecontroller.text.trim())<=double.parse(getsenderamount[1])){
-                                if(double.parse(amountupdatecontroller.text.trim().toString())<double.parse(limitset[2])){
+                                if(double.parse(amountupdatecontroller.text.trim().toString())<double.parse(limitset[3])){
                                   updatequicktransferstatus();
                                   createtransaction();
                                   createnotification();
