@@ -15,6 +15,8 @@ import 'package:truemoneyversion2/View/agent_transaction_log.dart';
 
 import 'package:truemoneyversion2/View/notification_agent_screen.dart';
 import 'package:truemoneyversion2/View/notificationadminscreen.dart';
+import 'package:truemoneyversion2/View/paymentmgmt.dart';
+import 'package:truemoneyversion2/View/promotionmgmt.dart';
 import 'package:truemoneyversion2/View/sign_in_screen_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -135,32 +137,58 @@ class adminhomescreen extends StatefulWidget {
 
 class _adminhomescreenState extends State<adminhomescreen> {
 
-  final descriptioncontroller=TextEditingController();
-  final discountcontroller=TextEditingController();
-  final enddatecontroller=TextEditingController();
-  final startdatecontroller=TextEditingController();
-  final typecontroller=TextEditingController();
-  final servicesntroller=TextEditingController();
-
-  Future createservices() async{
-    await FirebaseFirestore.instance.collection('quickservices').add({
-      'description':descriptioncontroller.text.trim(),
-      'discount':discountcontroller.text.trim(),
-      // 'tranreceiver':senttoaccountid.text.trim(),
-      'enddate':enddatecontroller.text.trim(),
-      'services':servicesntroller.text.trim(),
-      'startdate':startdatecontroller.text.trim(),
-      'type':typecontroller.text.trim(),
-
-    });
-  }
+  // final descriptioncontroller=TextEditingController();
+  // final discountcontroller=TextEditingController();
+  //
+  // final typecontroller=TextEditingController();
+  // final servicesntroller=TextEditingController();
+  //
+  // Future createservices() async{
+  //   await FirebaseFirestore.instance.collection('quickservices').add({
+  //     'description':descriptioncontroller.text.trim(),
+  //     'discount':discountcontroller.text.trim(),
+  //     // 'tranreceiver':senttoaccountid.text.trim(),
+  //     'enddate':enddatecontroller.text.trim(),
+  //     'services':servicesntroller.text.trim(),
+  //     'startdate':startdatecontroller.text.trim(),
+  //     'type':typecontroller.text.trim(),
+  //
+  //   });
+  // }
   final descriptionpaymentcontroller=TextEditingController();
   final namepaymentcontroller=TextEditingController();
+  final accountidcontroller=TextEditingController();
+  final paymentcurrencycontroller=TextEditingController();
+  final paymentcategorycontroller=TextEditingController();
 
   Future createpayment() async{
     await FirebaseFirestore.instance.collection('quickpayment').add({
       'description':descriptionpaymentcontroller.text.trim(),
       'name':namepaymentcontroller.text.trim(),
+      'accountid':accountidcontroller.text.trim(),
+      'currency':paymentcurrencycontroller.text.trim(),
+      'amount':'0'
+    });
+  }
+
+  final descriptionpromotioncontroller=TextEditingController();
+  final namepromotioncontroller=TextEditingController();
+  // final promotioncategorycontroller=TextEditingController();
+  final promotiondiscountpercentagecontroller=TextEditingController();
+  final promotiondiscountcodecontroller=TextEditingController();
+  final promotionenddatecontroller=TextEditingController();
+  final promotionstartdatecontroller=TextEditingController();
+
+
+  Future createpromotions() async{
+    await FirebaseFirestore.instance.collection('quickpromotion').add({
+      'description':descriptionpromotioncontroller.text.trim(),
+      'name':namepromotioncontroller.text.trim(),
+      // 'category':promotioncategorycontroller.text.trim(),
+      'discount':promotiondiscountpercentagecontroller.text.trim(),
+      'code':promotiondiscountcodecontroller.text.trim(),
+      'endate':promotionenddatecontroller.text.trim(),
+      'startdate':promotionstartdatecontroller.text.trim()
     });
   }
 
@@ -172,7 +200,7 @@ class _adminhomescreenState extends State<adminhomescreen> {
           children: [
             TextField(
               autofocus: true,
-              controller: descriptioncontroller,
+              controller:descriptionpromotioncontroller,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'create service description',
@@ -182,7 +210,7 @@ class _adminhomescreenState extends State<adminhomescreen> {
               height: 16,
             ),
             TextField(
-              controller: discountcontroller,
+              controller: promotiondiscountpercentagecontroller,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'create discount percentage',
@@ -192,40 +220,41 @@ class _adminhomescreenState extends State<adminhomescreen> {
               height: 16,
             ),
             TextField(
-              controller: enddatecontroller,
+              controller:promotionenddatecontroller,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'create end date ',
+                labelText: 'create end date dd:mm:yy',
               ),
             ),
             SizedBox(
               height: 16,
             ),
             TextField(
-              controller: startdatecontroller,
+              controller: promotionstartdatecontroller,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'create start date',
+                labelText: 'create start date dd:mm:yy',
               ),
             ),
+
             SizedBox(
               height: 16,
             ),
             TextField(
-              controller: typecontroller,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'create type',
-              ),
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            TextField(
-              controller: servicesntroller,
+              controller: namepromotioncontroller,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'create services name',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            TextField(
+              controller:promotiondiscountcodecontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'create code',
               ),
             ),
             SizedBox(
@@ -245,7 +274,7 @@ class _adminhomescreenState extends State<adminhomescreen> {
               desc: "Are you sure to create this?",
               btnOkOnPress: () {
                   setState(() {
-                    createservices();
+                    createpromotions();
                   });
               },
               btnCancelOnPress: () {
@@ -258,9 +287,19 @@ class _adminhomescreenState extends State<adminhomescreen> {
 
     );
   }
-  Future createquickpayment(){
+
+  showpaymentmgmt(){
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=> paymentmgmt()));
+
+  }
+  showpromotionmgmt(){
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=> promotionmgmt()));
+
+  }
+
+  Future createpaymentservices(){
     return showDialog(context:context, builder: (context)=>AlertDialog(
-      title:Text('Create new payment'),
+      title:Text('Payment mgmt'),
       content:SingleChildScrollView(
         child: Column(
           children: [
@@ -285,6 +324,33 @@ class _adminhomescreenState extends State<adminhomescreen> {
             SizedBox(
               height: 16,
             ),
+            TextField(
+              controller: accountidcontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'create payment accountid',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            TextField(
+              controller: paymentcurrencycontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'create payment currency',
+              ),
+            ),
+            TextField(
+              controller: paymentcurrencycontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'create payment category',
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
 
           ],
         ),
@@ -296,7 +362,7 @@ class _adminhomescreenState extends State<adminhomescreen> {
               dialogType: DialogType.warning,
               animType: AnimType.topSlide,
               showCloseIcon: true,
-              title: "Create new payment",
+              title: "Create new payment service",
               desc: "Are you sure to create this?",
               btnOkOnPress: () {
                 setState(() {
@@ -307,7 +373,7 @@ class _adminhomescreenState extends State<adminhomescreen> {
 
               }
           ).show();
-        }, child: Text('Create'))
+        }, child: Text('Create',style:TextStyle(fontSize: 16,color: Colors.blue)),)
       ],
     ),
 
@@ -335,6 +401,9 @@ class _adminhomescreenState extends State<adminhomescreen> {
 
 
 
+
+
+
   var is_load_home = true;
   void signout(){
     FirebaseAuth.instance.signOut();
@@ -345,9 +414,11 @@ class _adminhomescreenState extends State<adminhomescreen> {
     // TODO: implement initState
     super.initState();
     getDocId();
+
     // load_home();
 
   }
+
   void dispose(){
     super.dispose();
   }
@@ -364,7 +435,7 @@ class _adminhomescreenState extends State<adminhomescreen> {
         if(ID==3){
           createquickservice();
         }else if(ID==2){
-          createquickpayment();
+          createpaymentservices();
         }else{
           Navigator.of(context).pushReplacement(
               CupertinoPageRoute(builder: (ctx) => feature_menu[ID]));
@@ -423,8 +494,14 @@ class _adminhomescreenState extends State<adminhomescreen> {
     return Expanded(
       child: InkWell(
         onTap: (){
-          Navigator.of(context).pushReplacement(
-              CupertinoPageRoute(builder: (ctx) => main_menu_grid[id]));
+          if(id==3){
+            showpaymentmgmt();
+          }else if(id==4) {
+            showpromotionmgmt();
+          }else{
+            Navigator.of(context).pushReplacement(
+                CupertinoPageRoute(builder: (ctx) => main_menu_grid[id]));
+          }
         },
         child: Container(
           decoration: BoxDecoration(

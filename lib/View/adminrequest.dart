@@ -171,8 +171,13 @@ class _adminrequestState extends State<adminrequest> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-
-
+              Text('current status : ' + status,
+                style: TextStyle(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 13,
+                    color: Colors.white
+                ),),
+              SizedBox(width: 20,),
               ElevatedButton(
                 child: Text("View details", style:
                 TextStyle(color: Colors.white,)),
@@ -312,7 +317,7 @@ class _adminrequestState extends State<adminrequest> {
         appBar: AppBar(
           title: Center(
             child: Text(
-              'MTA transaction requests',
+              'MTA transaction request',
               style: TextStyle(color: Colors.white),
             ),
           ),

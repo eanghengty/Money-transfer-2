@@ -13,6 +13,7 @@ import 'package:truemoneyversion2/View/money_transfer_service.dart';
 import 'package:truemoneyversion2/View/my_wallet.dart';
 import 'package:truemoneyversion2/View/notification_screen.dart';
 import 'package:truemoneyversion2/View/pay_services.dart';
+import 'package:truemoneyversion2/View/qrscanner.dart';
 import 'package:truemoneyversion2/View/quick_payment.dart';
 import 'package:truemoneyversion2/View/quick_transaction_limit.dart';
 import 'package:truemoneyversion2/View/quick_transfer.dart';
@@ -21,6 +22,8 @@ import'package:truemoneyversion2/View/sign_in_screen_view.dart';
 import'package:truemoneyversion2/View/contact_hotline.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -55,9 +58,9 @@ class _HomeScreenState extends State<HomeScreen> {
     FirebaseAuth.instance.signOut();
     Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=> SignInScreen()));
   }
-
+  final qr = TextEditingController();
   List menu = [ExchangeRate(), TermAndCondition(), Location(),Setting()];
-  List feature_menu=[QuickTransfer(),QuickPayment(),MoneyTransferService(),QuickTransaction()];
+  List feature_menu=[QuickTransfer(),QuickPayment(),MoneyTransferService(),QuickTransaction(),qrscanner()];
   Widget feature_row(
       {required int color_num,
       required String title_text,
@@ -66,8 +69,10 @@ class _HomeScreenState extends State<HomeScreen> {
       required int ID}) {
     return InkWell(
       onTap: (){
-        Navigator.of(context).pushReplacement(
-            CupertinoPageRoute(builder: (ctx) => feature_menu[ID]));
+          Navigator.of(context).pushReplacement(
+              CupertinoPageRoute(builder: (ctx) => feature_menu[ID]));
+
+
       },
       child: Container(
         width: double.infinity,
@@ -174,6 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+
   Widget build(BuildContext context) {
     if(docIDs.length==1){
       return Scaffold(
@@ -344,7 +350,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 ],
               )),
-          body: SingleChildScrollView(
+          body:SingleChildScrollView(
               child: Visibility(
                 visible: is_load_home,
                 child: Column(
@@ -416,6 +422,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         animation:
                         'https://assets9.lottiefiles.com/packages/lf20_ltbqacam.json',
                         ID: 1),
+                    feature_row(
+                        color_num: 800,
+                        title_text: 'Quick QR scan',
+                        description_text: 'This feature offer you the possibilty of '
+                            'QR scanning',
+                        animation:
+                        'https://assets9.lottiefiles.com/packages/lf20_ltbqacam.json',
+                        ID: 4),
                   ],
                 ),
                 replacement: Center(

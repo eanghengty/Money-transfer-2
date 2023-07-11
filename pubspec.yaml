@@ -44,6 +44,8 @@ dependencies:
   awesome_dialog: ^3.0.0
   firebase_storage: ^11.2.4
   fluttertoast: ^8.2.2
+  qr_flutter: ^4.0.0
+#  qr_code_scanner: ^0.4.0
 
 
 dev_dependencies:

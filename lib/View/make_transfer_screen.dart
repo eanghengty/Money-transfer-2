@@ -38,6 +38,18 @@ class _MakeTransferState extends State<MakeTransfer> {
             getrecieveramount.add(document['uid']);
             currentdocrec=document.reference.id;
           });
+          getmydoc();
+        })
+    );
+  }
+  List<String> mydoc=[];
+  Future getmydoc()async{
+    await FirebaseFirestore.instance.collection('customer').where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid).get().then(
+            (snapshot)=>snapshot.docs.forEach((document) {
+          print(document.reference.id);
+          setState(() {
+            mydoc.add(document.reference.id);
+          });
         })
     );
   }
@@ -93,10 +105,18 @@ class _MakeTransferState extends State<MakeTransfer> {
     await FirebaseFirestore.instance.collection('quicktransfer').doc(quickdocument).update({'status':'unselected'});
     print('status change to selected');
   }
+  Future updatetransactiontime() async{
+    await FirebaseFirestore.instance.collection('customer').doc(currentdocrec).update({'transactiontime':(int.parse(transactiontime[0])+1).toString()});
+    await FirebaseFirestore.instance.collection('customer').doc(mydoc[0]).update({'transactiontime':(int.parse(transactiontime[0])+1).toString()});
+    print('status change to selected');
+  }
+  List<String> datetime = [];
+  List<String> currentdate=[];
   Future createtransaction() async{
+
     await FirebaseFirestore.instance.collection('transactionlog').add({
       'tranamount':amountupdatecontroller.text.trim(),
-      'trandate':DateTime.now().toString().split(" "),
+      'trandate':datetime[0],
       // 'tranreceiver':senttoaccountid.text.trim(),
       'tranreceiver':quicktransferuser[0],
       'tranrecname':getrecieveramount[2],
@@ -122,6 +142,7 @@ class _MakeTransferState extends State<MakeTransfer> {
   }
 
   List<dynamic> getsenderamount=[];
+  List<String> transactiontime=[];
   Future getsenderid() async{
     await FirebaseFirestore.instance.collection('customer').where('uid',isEqualTo: FirebaseAuth.instance.currentUser!.uid).get().then(
             (snapshot)=>snapshot.docs.forEach((document) {
@@ -131,6 +152,7 @@ class _MakeTransferState extends State<MakeTransfer> {
             getsenderamount.add(document['khmoney']);
             getsenderamount.add(document['fullname']);
             getsenderamount.add(document['accountid']);
+            transactiontime.add(document['transactiontime']);
             currentdocsen=document.reference.id;
           });
         })
@@ -279,6 +301,9 @@ class _MakeTransferState extends State<MakeTransfer> {
                         desc: "Are you sure?",
                         btnCancelOnPress: (){},
                         btnOkOnPress: (){
+                          setState(() {
+                            currentdate=DateTime.now().toString().split(" ");
+                          });
                           if(!confirmedamount()){
                             AwesomeDialog(
                                 context: context,
@@ -314,7 +339,8 @@ class _MakeTransferState extends State<MakeTransfer> {
                               print('operation work');
                               print(amountupdatecontroller.text.trim().toString());
                               print(getsenderamount[0]);
-                              if(currencyupdatecontroller=='USD' && double.parse(amountupdatecontroller.text.trim().toString())>double.parse(getsenderamount[0])){
+                              if(currencyupdatecontroller=='USD' && double.parse(amountupdatecontroller.text.trim().toString())>double.parse(getsenderamount[0])&&
+                                  currentdate[0]==limitset[0]){
                                 AwesomeDialog(
                                     context: context,
                                     dialogType: DialogType.warning,
@@ -345,6 +371,10 @@ class _MakeTransferState extends State<MakeTransfer> {
                                   print("limit amount:"+limitset.length.toString());
                                   print("limit amount:"+limitset[0]);
                                   print("send amount:"+ amountupdatecontroller.text.trim().toString());
+                                  setState(() {
+                                    updatetransactiontime();
+                                    datetime=DateTime.now().toString().split(".");
+                                  });
                                   updatequicktransferstatus();
                                   createtransaction();
                                   createnotification();
@@ -377,6 +407,10 @@ class _MakeTransferState extends State<MakeTransfer> {
                                 ).show();
                               }else if(currencyupdatecontroller=='KH' && double.parse(amountupdatecontroller.text.trim())<=double.parse(getsenderamount[1])){
                                 if(double.parse(amountupdatecontroller.text.trim().toString())<double.parse(limitset[3])){
+                                  setState(() {
+                                    updatetransactiontime();
+                                    datetime=DateTime.now().toString().split(".");
+                                  });
                                   updatequicktransferstatus();
                                   createtransaction();
                                   createnotification();

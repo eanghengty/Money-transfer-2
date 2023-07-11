@@ -17,6 +17,7 @@ class _QuickTransactionState extends State<QuickTransaction> {
 
   List<dynamic> docIDs=['test'];
   String currentdoc="";
+
   Future getDocId() async{
     await FirebaseFirestore.instance.collection('quicklimit').where('uid',isEqualTo: FirebaseAuth.instance.currentUser!.uid).get().then(
             (snapshot)=>snapshot.docs.forEach((document) {
@@ -56,12 +57,13 @@ class _QuickTransactionState extends State<QuickTransaction> {
     withdrawamountlimitcontroller.dispose();
     dispose();
   }
+  List<String> date=[];
   Future addquicktransactionlimit() async {
     await FirebaseFirestore.instance.collection('quicklimit').add({
       'transferdailylimit':transferdailylimitcontroller.text.trim(),
       'enmoney':withdrawamountlimitcontroller.text.trim(),
       'khmoney':khlimitcontroller.text.trim(),
-      'setdate':setdatecontroller,
+      'setdate':date[0],
       'uid':currentuser.currentUser!.uid,
 
     });
@@ -203,6 +205,7 @@ class _QuickTransactionState extends State<QuickTransaction> {
                         btnCancelOnPress: (){},
                         btnOkOnPress: (){
                           setState(() {
+                            date=datelimitcontroller.toString().split(" ");
                             updatetransactionlimit();
                           });
                           Navigator.of(context).pushReplacement(CupertinoPageRoute(
@@ -317,6 +320,7 @@ class _QuickTransactionState extends State<QuickTransaction> {
                         btnCancelOnPress: (){},
                         btnOkOnPress: (){
                               setState(() {
+                                date=setdatecontroller.toString().split(" ");
                                 addquicktransactionlimit();
                               });
                               Navigator.of(context).pushReplacement(CupertinoPageRoute(
