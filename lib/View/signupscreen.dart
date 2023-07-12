@@ -8,6 +8,7 @@ import'package:truemoneyversion2/View/verify_code_screen.dart';
 import'package:flutter/cupertino.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:truemoneyversion2/View/verifyemail.dart';
 class signup extends StatefulWidget {
   const signup({Key? key}) : super(key: key);
 
@@ -226,20 +227,8 @@ class _signupState extends State<signup> {
                                   }
                               ).show();}),
                         SizedBox(height: 16,),
-                        Text('Tap on this "Agent" button to sigin as agent account.'),
-                        SizedBox(height: 16,),
-                        ElevatedButton(
-                          child: Text("Agent", style:
-                          TextStyle(color: Colors.white,)),
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.lightBlue,
-                            elevation: 0,
 
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const AgentVerification() ));
-                          },
-                        ),
+
                       ],
                     ),
                   )

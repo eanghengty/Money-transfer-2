@@ -41,30 +41,17 @@ class _RegisterStringState extends State<RegisterString> {
     final file=File(pickedfile!.path!);
     final ref=firebase_storage.FirebaseStorage.instance.ref().child(path);
     ref.putFile(file);
+
+    print('done');
   }
 
   void picked_file() async{
-    try{
-      setState(() {
-        is_loading=true;
-      });
-      result=await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowMultiple: false,
-        allowedExtensions: ['png','jpg']
-      );
-      if (result!=null){
-        file_name=result!.files.first.name;
-        pickedfile=result!.files.first;
+   final result=await FilePicker.platform.pickFiles();
+   if(result==null) return;
+   setState(() {
+     pickedfile=result.files.first;
+   });
 
-      }
-
-      setState(() {
-        is_loading=false;
-      });
-    }catch(e){
-      print(e);
-    }
   }
   final emailcontroller=TextEditingController();
   final passwordcontroller=TextEditingController();
@@ -136,7 +123,7 @@ class _RegisterStringState extends State<RegisterString> {
 
     super.initState();
   }
-
+  List<String> date=[];
   Future adduserdetail() async{
     await FirebaseFirestore.instance.collection('customer').add({
       'fullname':fullnamecontroller.text.trim(),
@@ -149,7 +136,7 @@ class _RegisterStringState extends State<RegisterString> {
       'userrole':userrolecontroller,
       'userverify':userverifycontroller,
       'accountid':phonenumbercontroller.text.trim(),
-      'createddate':DateTime.now().toString(),
+      'createddate':date[0],
       'status':"enabled",
       'accountactivated':'yes',
       'accountstatus':'online',
@@ -347,6 +334,7 @@ class _RegisterStringState extends State<RegisterString> {
                               showdate1=value!;
                               showdate2=showdate1.toString();
                               dateofbirthcontroller=showdate2;
+                              date=showdate2.split(".");
                             }));},
                       color: Colors.blue,
                       child:Padding(
@@ -415,6 +403,7 @@ class _RegisterStringState extends State<RegisterString> {
                 InkWell(
                   onTap: (){
                     picked_file();
+
                   },
                   child: Container(
                     padding: EdgeInsets.all(20),
@@ -453,7 +442,7 @@ class _RegisterStringState extends State<RegisterString> {
                   height: 16,
                 ),
                 Text(
-                    'Tap on this "Register" button to register new account for your starting your money transfer process.'),
+                    'Tap on this button to register new account for your starting your money transfer process.'),
                 SizedBox(
                   height: 16,
                 ),
@@ -495,6 +484,7 @@ class _RegisterStringState extends State<RegisterString> {
                                   phone.clear();
                                 },).show();
                             }else{
+                              uploadfile();
                               adduserdetail();
                               addusermoredetail();
                               Navigator.of(context).pushReplacement(CupertinoPageRoute(

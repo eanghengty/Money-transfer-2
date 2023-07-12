@@ -1,4 +1,4 @@
-import'package:flutter/material.dart';
+          import'package:flutter/material.dart';
 import'package:flutter/cupertino.dart';
 import'package:lottie/lottie.dart';
 import 'package:truemoneyversion2/View/make_payment_screen.dart';

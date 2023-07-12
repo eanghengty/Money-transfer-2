@@ -6,6 +6,7 @@ import 'package:truemoneyversion2/View/agent_verification.dart';
 import 'package:truemoneyversion2/View/confirm_lock.dart';
 import 'package:truemoneyversion2/View/loading_to_home_screen.dart';
 import 'package:truemoneyversion2/View/register_screen_view.dart';
+import 'package:truemoneyversion2/View/showforgetpassword.dart';
 import 'package:truemoneyversion2/View/sigintohome.dart';
 import'package:truemoneyversion2/View/verify_code_screen.dart';
 import'package:flutter/cupertino.dart';
@@ -30,6 +31,7 @@ class _SignInScreenState extends State<SignInScreen> {
   //       })
   //   );}
   @override
+  final changeemailcontroller=TextEditingController();
   final emailcontroller = TextEditingController();
   final passwordcontroller = TextEditingController();
   void dipose(){
@@ -215,6 +217,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       //   style: ElevatedButton.styleFrom(
                       //     primary: Colors.lightBlue,
                       //     elevation: 0,
+                      //     elevation: 0,
                       //
                       //   ),
                       //   onPressed: () {
@@ -239,6 +242,14 @@ class _SignInScreenState extends State<SignInScreen> {
                         },
                       ):Text(''),
                       SizedBox(height: 16,),
+                      InkWell(
+                        onTap:(){
+
+                          Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx)=>const showforgetpassword()));
+
+                        },
+                        child: Text('You forgot your password?', style:TextStyle(fontSize: 16,color: Colors.blue),textAlign: TextAlign.center,),
+                      )
 
 
                     ],
@@ -247,6 +258,7 @@ class _SignInScreenState extends State<SignInScreen> {
               ],
             )
         ),
+
       )
     );
   }

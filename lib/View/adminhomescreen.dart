@@ -167,7 +167,8 @@ class _adminhomescreenState extends State<adminhomescreen> {
       'name':namepaymentcontroller.text.trim(),
       'accountid':accountidcontroller.text.trim(),
       'currency':paymentcurrencycontroller.text.trim(),
-      'amount':'0'
+      'amount':'0',
+      'category':paymentcategorycontroller.text.trim()
     });
   }
 
